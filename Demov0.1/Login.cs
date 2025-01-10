@@ -19,9 +19,8 @@ namespace Demov0._1
         public Login()
         {
             InitializeComponent();
-
-            string dbPath = "Data Source=C:\\Users\\โชตประพัฒน์\\source\\repos\\Demov0.1\\Demov0.1\\bin\\Debug\\Database.db;Version=3;";
-            sqlite_conn = new SQLiteConnection(dbPath);
+            sqlite_conn = new SQLiteConnection("Data Source=Admin.db;Version=3;");
+            sqlite_conn.Open();
         }
 
         private void Login_Load(object sender, EventArgs e)
@@ -72,9 +71,6 @@ namespace Demov0._1
         {
             try
             {
-                // เปิดการเชื่อมต่อฐานข้อมูล
-                sqlite_conn.Open();
-
                 // SQL Query สำหรับดึงข้อมูลผู้ใช้ที่ตรงกับ Username และ Password
                 string query = "SELECT COUNT(*) FROM Admin WHERE Username = @Username AND Password = @Password";
                 using (SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn))
@@ -94,11 +90,7 @@ namespace Demov0._1
                 MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            finally
-            {
-                // ปิดการเชื่อมต่อฐานข้อมูล
-                sqlite_conn.Close();
-            }
         }
+
     }
 }
