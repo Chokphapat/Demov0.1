@@ -269,17 +269,22 @@ namespace Demov0._1
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            index = e.RowIndex;
-            DataGridViewRow Row = dataGridView1.Rows[index];
-            richTextBox1.Text = Row.Cells[1].Value.ToString();
-            richTextBox2.Text = Row.Cells[2].Value.ToString();
-            richTextBox3.Text = Row.Cells[3].Value.ToString();
-            richTextBox4.Text = Row.Cells[5].Value.ToString();
-            richTextBox5.Text = Row.Cells[6].Value.ToString();
-            richTextBox6.Text = Row.Cells[7].Value.ToString();
-            dateTimePicker1.Text = Row.Cells[4].Value.ToString();
+            if (e.RowIndex >= 0 && e.RowIndex < dataGridView1.Rows.Count && !dataGridView1.Rows[e.RowIndex].IsNewRow)
+            {
+                // อัพเดตตัวแปร index ให้ตรงกับแถวที่ถูกคลิก
+                index = e.RowIndex;
+                DataGridViewRow Row = dataGridView1.Rows[index];
 
-
+                richTextBox1.Text = Row.Cells[1].Value?.ToString();
+                richTextBox2.Text = Row.Cells[2].Value?.ToString();
+                richTextBox3.Text = Row.Cells[3].Value?.ToString();
+                richTextBox4.Text = Row.Cells[5].Value?.ToString();
+                richTextBox5.Text = Row.Cells[6].Value?.ToString();
+                richTextBox6.Text = Row.Cells[7].Value?.ToString();
+                dateTimePicker1.Text = Row.Cells[4].Value?.ToString();
+            }
         }
+
+
     }
 }
