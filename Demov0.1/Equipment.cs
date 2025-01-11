@@ -11,11 +11,11 @@ using System.Windows.Forms;
 
 namespace Demov0._1
 {
-    public partial class History : Form
+    public partial class Equipment : Form
     {
         private SQLiteConnection sqlite_conn;
 
-        public History()
+        public Equipment()
         {
             InitializeComponent();
 
@@ -46,7 +46,7 @@ namespace Demov0._1
                 adapter.Fill(dataTable);
 
                
-                dataGridView1.DataSource = dataTable;
+                
             }
             catch (Exception ex)
             {
@@ -76,6 +76,11 @@ namespace Demov0._1
         }
 
         private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }

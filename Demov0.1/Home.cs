@@ -43,7 +43,7 @@ namespace Demov0._1
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ShowFormInPanel(new History());
+            ShowFormInPanel(new Equipment());
         }
 
         private void button4_Click(object sender, EventArgs e)
