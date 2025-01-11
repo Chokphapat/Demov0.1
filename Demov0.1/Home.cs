@@ -48,7 +48,7 @@ namespace Demov0._1
 
         private void button4_Click(object sender, EventArgs e)
         {
-
+            ShowFormInPanel(new Register());
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
