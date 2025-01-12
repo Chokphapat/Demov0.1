@@ -31,8 +31,6 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.sqLiteCommand1 = new System.Data.SQLite.SQLiteCommand();
             this.sqLiteCommandBuilder1 = new System.Data.SQLite.SQLiteCommandBuilder();
             this.sqLiteCommandBuilder2 = new System.Data.SQLite.SQLiteCommandBuilder();
@@ -60,9 +58,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -79,9 +77,8 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Controls.Add(this.richTextBox1);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(2019, 73);
@@ -97,27 +94,6 @@
             this.label6.Size = new System.Drawing.Size(64, 40);
             this.label6.TabIndex = 13;
             this.label6.Text = "ค้นหา";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.pictureBox1.Image = global::Demov0._1.Properties.Resources.search;
-            this.pictureBox1.Location = new System.Drawing.Point(1565, 30);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(29, 26);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.richTextBox1.Location = new System.Drawing.Point(940, 16);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(654, 40);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
             // 
             // sqLiteCommand1
             // 
@@ -135,9 +111,12 @@
             // 
             // dataGridView2
             // 
+            this.dataGridView2.AllowUserToAddRows = false;
+            this.dataGridView2.AllowUserToDeleteRows = false;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView2.Location = new System.Drawing.Point(3, 3);
             this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.ReadOnly = true;
             this.dataGridView2.RowHeadersWidth = 51;
             this.dataGridView2.RowTemplate.Height = 24;
             this.dataGridView2.Size = new System.Drawing.Size(1537, 789);
@@ -194,6 +173,7 @@
             // 
             // รหัส
             // 
+            this.รหัส.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.รหัส.Location = new System.Drawing.Point(15, 62);
             this.รหัส.Name = "รหัส";
             this.รหัส.Size = new System.Drawing.Size(326, 46);
@@ -213,6 +193,7 @@
             // 
             // หาย
             // 
+            this.หาย.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.หาย.Location = new System.Drawing.Point(208, 641);
             this.หาย.Name = "หาย";
             this.หาย.Size = new System.Drawing.Size(118, 49);
@@ -221,6 +202,7 @@
             // 
             // ไม่พร้อม
             // 
+            this.ไม่พร้อม.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.ไม่พร้อม.Location = new System.Drawing.Point(14, 641);
             this.ไม่พร้อม.Name = "ไม่พร้อม";
             this.ไม่พร้อม.Size = new System.Drawing.Size(159, 49);
@@ -229,6 +211,7 @@
             // 
             // พร้อม
             // 
+            this.พร้อม.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.พร้อม.Location = new System.Drawing.Point(208, 517);
             this.พร้อม.Name = "พร้อม";
             this.พร้อม.Size = new System.Drawing.Size(139, 49);
@@ -237,6 +220,7 @@
             // 
             // คืน
             // 
+            this.คืน.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.คืน.Location = new System.Drawing.Point(14, 517);
             this.คืน.Name = "คืน";
             this.คืน.Size = new System.Drawing.Size(118, 49);
@@ -245,6 +229,7 @@
             // 
             // ยืม
             // 
+            this.ยืม.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.ยืม.Location = new System.Drawing.Point(208, 402);
             this.ยืม.Name = "ยืม";
             this.ยืม.Size = new System.Drawing.Size(118, 49);
@@ -330,6 +315,7 @@
             // 
             // จำนวน
             // 
+            this.จำนวน.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.จำนวน.Location = new System.Drawing.Point(15, 402);
             this.จำนวน.Name = "จำนวน";
             this.จำนวน.Size = new System.Drawing.Size(118, 49);
@@ -338,6 +324,7 @@
             // 
             // ชนิด
             // 
+            this.ชนิด.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.ชนิด.Location = new System.Drawing.Point(15, 273);
             this.ชนิด.Name = "ชนิด";
             this.ชนิด.Size = new System.Drawing.Size(326, 49);
@@ -346,6 +333,7 @@
             // 
             // ชื่อ
             // 
+            this.ชื่อ.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.ชื่อ.Location = new System.Drawing.Point(15, 166);
             this.ชื่อ.Name = "ชื่อ";
             this.ชื่อ.Size = new System.Drawing.Size(326, 46);
@@ -384,6 +372,15 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "ชื่ออุปกรณ์";
             // 
+            // textBox1
+            // 
+            this.textBox1.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.textBox1.Location = new System.Drawing.Point(924, 16);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(392, 43);
+            this.textBox1.TabIndex = 14;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
             // Equipment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -399,7 +396,6 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
@@ -414,8 +410,6 @@
         private System.Data.SQLite.SQLiteCommandBuilder sqLiteCommandBuilder1;
         private System.Data.SQLite.SQLiteCommandBuilder sqLiteCommandBuilder2;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
@@ -441,5 +435,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.RichTextBox รหัส;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

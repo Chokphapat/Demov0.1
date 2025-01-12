@@ -289,5 +289,33 @@ namespace Demov0._1
         {
 
         }
+
+        private void ค้นหา_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+            string searchValue = textBox1.Text;
+            try
+            {
+                string searchQuery = "SELECT * FROM Messages WHERE ชื่ออุปกรณ์ LIKE @SearchValue OR ชนิดอุปกรณ์ LIKE @SearchValue OR ประวัติการยืมคืน LIKE @SearchValue OR วัน_เดือน_ปี LIKE @SearchValue OR ชื่อผู้ใช้ LIKE @SearchValue ";
+                using (SQLiteCommand searchCmd = new SQLiteCommand(searchQuery, sqlite_conn))
+                {
+                    searchCmd.Parameters.AddWithValue("@SearchValue", "%" + searchValue + "%");
+                    SQLiteDataAdapter adapter = new SQLiteDataAdapter(searchCmd);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    dataGridView1.DataSource = dataTable;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error searching data: " + ex.Message);
+            }
+        }
     }
 }

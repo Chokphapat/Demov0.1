@@ -48,6 +48,8 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.ค้นหา = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -93,13 +95,13 @@
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonShadow;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(4, 6);
+            this.dataGridView1.Location = new System.Drawing.Point(4, 55);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1100, 716);
+            this.dataGridView1.Size = new System.Drawing.Size(1100, 679);
             this.dataGridView1.TabIndex = 5;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
@@ -270,12 +272,32 @@
             // 
             // flowLayoutPanel2
             // 
+            this.flowLayoutPanel2.Controls.Add(this.ค้นหา);
+            this.flowLayoutPanel2.Controls.Add(this.textBox1);
             this.flowLayoutPanel2.Controls.Add(this.dataGridView1);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(419, 12);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(1136, 778);
             this.flowLayoutPanel2.TabIndex = 13;
             this.flowLayoutPanel2.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel2_Paint);
+            // 
+            // ค้นหา
+            // 
+            this.ค้นหา.AutoSize = true;
+            this.ค้นหา.Location = new System.Drawing.Point(3, 0);
+            this.ค้นหา.Name = "ค้นหา";
+            this.ค้นหา.Size = new System.Drawing.Size(61, 37);
+            this.ค้นหา.TabIndex = 6;
+            this.ค้นหา.Text = "ค้นหา";
+            this.ค้นหา.Click += new System.EventHandler(this.ค้นหา_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(70, 3);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(321, 43);
+            this.textBox1.TabIndex = 7;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // Crud
             // 
@@ -285,7 +307,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
             this.BackColor = System.Drawing.Color.Gainsboro;
-            this.ClientSize = new System.Drawing.Size(1608, 755);
+            this.ClientSize = new System.Drawing.Size(1608, 869);
             this.Controls.Add(this.flowLayoutPanel2);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
@@ -298,6 +320,7 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -324,6 +347,8 @@
         private System.Windows.Forms.RichTextBox richTextBox5;
         private System.Windows.Forms.RichTextBox richTextBox6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label ค้นหา;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
