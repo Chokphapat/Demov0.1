@@ -31,6 +31,14 @@ namespace Demov0._1
             createTableCmd.ExecuteNonQuery();
 
             LoadComboBoxData();
+
+            
+            comboBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            comboBox1.AutoCompleteSource = AutoCompleteSource.ListItems;
+
+
+
+
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -39,16 +47,26 @@ namespace Demov0._1
         }
         private void LoadComboBoxData()
         {
+            comboBox1.Items.Clear(); // เพิ่มการเคลียร์ข้อมูลก่อนโหลดใหม่
+            HashSet<string> uniqueItems = new HashSet<string>();
+
             string selectQuery = "SELECT DISTINCT ชื่ออุปกรณ์ FROM Equipment";
             SQLiteCommand cmd = new SQLiteCommand(selectQuery, equipment_conn);
             using (SQLiteDataReader reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    comboBox1.Items.Add(reader["ชื่ออุปกรณ์"].ToString());
+                    string item = reader["ชื่ออุปกรณ์"].ToString();
+                    if (!uniqueItems.Contains(item))
+                    {
+                        uniqueItems.Add(item);
+                        comboBox1.Items.Add(item);
+                    }
                 }
             }
         }
+
+
 
 
         private void Form1_Load(object sender, EventArgs e)
@@ -58,43 +76,73 @@ namespace Demov0._1
 
         private async void button1_Click(object sender, EventArgs e)
         {
-
             string text1 = comboBox1.SelectedItem?.ToString();
             string text2 = richTextBox2.Text;
-            string text3 = richTextBox3.Text;
+            string text3 = combobox2.Text;
             string text4 = richTextBox4.Text;
             string text5 = richTextBox5.Text;
             string text6 = richTextBox6.Text;
             string text7 = dateTimePicker1.Text;
+            int borrowAmount;
 
-            if (string.IsNullOrEmpty(text1))
+            if (string.IsNullOrEmpty(text1) || !int.TryParse(richTextBox1.Text, out borrowAmount) || borrowAmount <= 0)
             {
-                MessageBox.Show("กรุณาเลือกชื่ออุปกรณ์", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("กรุณาเลือกชื่ออุปกรณ์และกรอกจำนวนการยืมที่ถูกต้อง", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (MessageBox.Show("ต้องการยืนยันข้อมูลหรือไม่", "ยืนยัน", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            // อัปเดตจำนวนในฐานข้อมูล Equipment
+            string updateEquipmentQuery = @"UPDATE Equipment 
+                                    SET จำนวนการยืม = จำนวนการยืม + @borrowAmount, 
+                                        จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @borrowAmount 
+                                    WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+            SQLiteCommand updateEquipmentCmd = new SQLiteCommand(updateEquipmentQuery, equipment_conn);
+            updateEquipmentCmd.Parameters.AddWithValue("@borrowAmount", borrowAmount);
+            updateEquipmentCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
+            updateEquipmentCmd.ExecuteNonQuery();
+
+            // เพิ่มข้อมูลการยืมลงใน Messages
+            string insertQuery = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ) 
+                           VALUES (@Text1, @Text2, @Text3, @Text7, @Text4, @Text5, @Text6)";
+            SQLiteCommand insertCmd = new SQLiteCommand(insertQuery, sqlite_conn);
+            insertCmd.Parameters.AddWithValue("@Text1", text1);
+            insertCmd.Parameters.AddWithValue("@Text2", text2);
+            insertCmd.Parameters.AddWithValue("@Text3", $"ยืม จำนวน({borrowAmount})");
+            insertCmd.Parameters.AddWithValue("@Text4", text4);
+            insertCmd.Parameters.AddWithValue("@Text5", text5);
+            insertCmd.Parameters.AddWithValue("@Text6", text6);
+            insertCmd.Parameters.AddWithValue("@Text7", text7);
+            insertCmd.ExecuteNonQuery();
+
+            MessageBox.Show("บันทึกข้อมูลการยืมสำเร็จ");
+
+            // ตรวจสอบความสมดุลของจำนวนอุปกรณ์
+            string checkBalanceQuery = "SELECT จำนวนทั้งหมด, จำนวนการยืม + จำนวนการคืน + จำนวนพร้อมใช้งาน + จำนวนไม่พร้อมใช้งาน + จำนวนหาย AS totalSum FROM Equipment WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+            SQLiteCommand checkBalanceCmd = new SQLiteCommand(checkBalanceQuery, equipment_conn);
+            checkBalanceCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
+            using (SQLiteDataReader reader = checkBalanceCmd.ExecuteReader())
             {
-                string insertQuery = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ) VALUES (@Text1, @Text2, @Text3, @Text7, @Text4, @Text5, @Text6)";
-                SQLiteCommand insertCmd = new SQLiteCommand(insertQuery, sqlite_conn);
-                insertCmd.Parameters.AddWithValue("@Text1", text1);
-                insertCmd.Parameters.AddWithValue("@Text2", text2);
-                insertCmd.Parameters.AddWithValue("@Text3", text3);
-                insertCmd.Parameters.AddWithValue("@Text4", text4);
-                insertCmd.Parameters.AddWithValue("@Text5", text5);
-                insertCmd.Parameters.AddWithValue("@Text6", text6);
-                insertCmd.Parameters.AddWithValue("@Text7", text7);
-                insertCmd.ExecuteNonQuery();
-
-                comboBox1.SelectedIndex = -1;
-                richTextBox2.Clear();
-                richTextBox3.Clear();
-                richTextBox4.Clear();
-                richTextBox5.Clear();
-                richTextBox6.Clear();
-
-                LoadData();
+                if (reader.Read())
+                {
+                    int total = Convert.ToInt32(reader["จำนวนทั้งหมด"]);
+                    int totalSum = Convert.ToInt32(reader["totalSum"]);
+                    if (total != totalSum)
+                    {
+                        MessageBox.Show("จำนวนรวมไม่สอดคล้องกับข้อมูลจริง กรุณาตรวจสอบ");
+                    }
+                }
             
+
+            // เคลียร์ฟอร์ม
+            comboBox1.SelectedIndex = -1;
+            richTextBox2.Clear();
+            richTextBox1.Clear();
+            richTextBox4.Clear();
+            richTextBox5.Clear();
+            richTextBox6.Clear();
+
+            LoadData();
+
 
 
             var apiClient = new ApiClient();
@@ -260,7 +308,7 @@ namespace Demov0._1
                 SQLiteCommand updateCmd = new SQLiteCommand(updateQuery, sqlite_conn);
                 updateCmd.Parameters.AddWithValue("@Text1", comboBox1.Text);
                 updateCmd.Parameters.AddWithValue("@Text2", richTextBox2.Text);
-                updateCmd.Parameters.AddWithValue("@Text3", richTextBox3.Text);
+                updateCmd.Parameters.AddWithValue("@Text3", combobox2.Text);
                 updateCmd.Parameters.AddWithValue("@Text4", dateTimePicker1.Text);
                 updateCmd.Parameters.AddWithValue("@Text5", richTextBox4.Text);
                 updateCmd.Parameters.AddWithValue("@Text6", richTextBox5.Text);
@@ -287,7 +335,7 @@ namespace Demov0._1
 
                 comboBox1.SelectedItem = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
                 richTextBox2.Text = row.Cells[2].Value?.ToString();
-                richTextBox3.Text = row.Cells[3].Value?.ToString();
+                combobox2.Text = row.Cells[3].Value?.ToString();
                 dateTimePicker1.Text = row.Cells[4].Value?.ToString();
                 richTextBox4.Text = row.Cells[5].Value?.ToString();
                 richTextBox5.Text = row.Cells[6].Value?.ToString();
@@ -297,29 +345,39 @@ namespace Demov0._1
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string selectedValue = comboBox1.SelectedItem?.ToString();
-            if (!string.IsNullOrEmpty(selectedValue))
+            
+            if (comboBox1.SelectedItem != null)
             {
-                string selectQuery = "SELECT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                SQLiteCommand cmd = new SQLiteCommand(selectQuery, equipment_conn);
-                cmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", selectedValue);
-                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                string selectedValue = comboBox1.SelectedItem.ToString();
+
+                
+                richTextBox2.Clear();
+
+                try
                 {
-                    if (reader.Read())
+                    string selectQuery = "SELECT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+                    SQLiteCommand cmd = new SQLiteCommand(selectQuery, equipment_conn);
+                    cmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", selectedValue);
+
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        richTextBox2.Text = reader["ชนิดอุปกรณ์"].ToString();
-                    }
-                    else
-                    {
-                        richTextBox2.Clear();
+                        if (reader.Read())
+                        {
+                            richTextBox2.Text = reader["ชนิดอุปกรณ์"].ToString();
+                        }
+                        else
+                        {
+                            MessageBox.Show("ไม่พบข้อมูลชนิดอุปกรณ์สำหรับอุปกรณ์นี้", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                     }
                 }
-            }
-            else
-            {
-                richTextBox2.Clear();
+                catch (Exception ex)
+                {
+                    MessageBox.Show("เกิดข้อผิดพลาด: " + ex.Message);
+                }
             }
         }
+
 
         private void ค้นหา_Click(object sender, EventArgs e)
         {
@@ -348,11 +406,6 @@ namespace Demov0._1
                 MessageBox.Show("Error searching data: " + ex.Message);
             }
         }
-
-        private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-
-        }
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             if (sqlite_conn != null)
@@ -369,5 +422,19 @@ namespace Demov0._1
             base.OnFormClosed(e);
         }
 
+        private void combobox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void richTextBox1_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
