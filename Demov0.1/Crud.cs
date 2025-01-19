@@ -110,7 +110,8 @@ namespace Demov0._1
                     SQLiteCommand borrowMessageCmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
                     borrowMessageCmd.Parameters.AddWithValue("@Text1", text1);
                     borrowMessageCmd.Parameters.AddWithValue("@Text2", text2);
-                    borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม จำนวน({amount})");
+                    //borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม จำนวน({amount})");
+                    borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม");
                     borrowMessageCmd.Parameters.AddWithValue("@Date", DateTime.Now.ToShortDateString());
                     borrowMessageCmd.Parameters.AddWithValue("@Time", DateTime.Now.ToShortTimeString());
                     borrowMessageCmd.Parameters.AddWithValue("@User", user);
@@ -137,7 +138,8 @@ namespace Demov0._1
                     SQLiteCommand returnMessageCmd = new SQLiteCommand(insertReturnMessage, sqlite_conn);
                     returnMessageCmd.Parameters.AddWithValue("@Text1", text1);
                     returnMessageCmd.Parameters.AddWithValue("@Text2", text2);
-                    returnMessageCmd.Parameters.AddWithValue("@History", $"คืน จำนวน({amount})");
+                    //returnMessageCmd.Parameters.AddWithValue("@History", $"คืน จำนวน({amount})");
+                    returnMessageCmd.Parameters.AddWithValue("@History", $"คืน");
                     returnMessageCmd.Parameters.AddWithValue("@Date", DateTime.Now.ToShortDateString());
                     returnMessageCmd.Parameters.AddWithValue("@Time", DateTime.Now.ToShortTimeString());
                     returnMessageCmd.Parameters.AddWithValue("@User", user);
@@ -363,6 +365,7 @@ namespace Demov0._1
                 richTextBox4.Text = row.Cells[5].Value?.ToString();
                 richTextBox5.Text = row.Cells[6].Value?.ToString();
                 richTextBox6.Text = row.Cells[7].Value?.ToString();
+                richTextBox1.Text= row.Cells[8].Value?.ToString();
             }
         }
 
