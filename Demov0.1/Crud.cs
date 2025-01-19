@@ -76,79 +76,101 @@ namespace Demov0._1
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            string text1 = comboBox1.SelectedItem?.ToString();
-            string text2 = richTextBox2.Text;
-            string text3 = combobox2.Text;
-            string text4 = richTextBox4.Text;
-            string text5 = richTextBox5.Text;
-            string text6 = richTextBox6.Text;
-            string text7 = dateTimePicker1.Text;
-            int borrowAmount;
+            string text1 = comboBox1.SelectedItem?.ToString(); // ชื่ออุปกรณ์
+            string text2 = richTextBox2.Text; // ชนิดอุปกรณ์
+            string user = richTextBox5.Text; // ชื่อผู้ใช้งาน
+            string note = richTextBox6.Text; // หมายเหตุ
+            string action = combobox2.SelectedItem?.ToString(); // เลือกยืม/คืน
+            string many = richTextBox1.Text;
+            int amount = 0;
 
-            if (string.IsNullOrEmpty(text1) || !int.TryParse(richTextBox1.Text, out borrowAmount) || borrowAmount <= 0)
+            if (string.IsNullOrEmpty(text1) || string.IsNullOrEmpty(action) || !int.TryParse(richTextBox1.Text, out amount) || amount <= 0)
             {
-                MessageBox.Show("กรุณาเลือกชื่ออุปกรณ์และกรอกจำนวนการยืมที่ถูกต้อง", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("กรุณาเลือกชื่ออุปกรณ์ ประเภท และกรอกจำนวนที่ถูกต้อง", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // อัปเดตจำนวนในฐานข้อมูล Equipment
-            string updateEquipmentQuery = @"UPDATE Equipment 
-                                    SET จำนวนการยืม = จำนวนการยืม + @borrowAmount, 
-                                        จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @borrowAmount 
-                                    WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-            SQLiteCommand updateEquipmentCmd = new SQLiteCommand(updateEquipmentQuery, equipment_conn);
-            updateEquipmentCmd.Parameters.AddWithValue("@borrowAmount", borrowAmount);
-            updateEquipmentCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
-            updateEquipmentCmd.ExecuteNonQuery();
-
-            // เพิ่มข้อมูลการยืมลงใน Messages
-            string insertQuery = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ) 
-                           VALUES (@Text1, @Text2, @Text3, @Text7, @Text4, @Text5, @Text6)";
-            SQLiteCommand insertCmd = new SQLiteCommand(insertQuery, sqlite_conn);
-            insertCmd.Parameters.AddWithValue("@Text1", text1);
-            insertCmd.Parameters.AddWithValue("@Text2", text2);
-            insertCmd.Parameters.AddWithValue("@Text3", $"ยืม จำนวน({borrowAmount})");
-            insertCmd.Parameters.AddWithValue("@Text4", text4);
-            insertCmd.Parameters.AddWithValue("@Text5", text5);
-            insertCmd.Parameters.AddWithValue("@Text6", text6);
-            insertCmd.Parameters.AddWithValue("@Text7", text7);
-            insertCmd.ExecuteNonQuery();
-
-            MessageBox.Show("บันทึกข้อมูลการยืมสำเร็จ");
-
-            // ตรวจสอบความสมดุลของจำนวนอุปกรณ์
-            string checkBalanceQuery = "SELECT จำนวนทั้งหมด, จำนวนการยืม + จำนวนการคืน + จำนวนพร้อมใช้งาน + จำนวนไม่พร้อมใช้งาน + จำนวนหาย AS totalSum FROM Equipment WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-            SQLiteCommand checkBalanceCmd = new SQLiteCommand(checkBalanceQuery, equipment_conn);
-            checkBalanceCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
-            using (SQLiteDataReader reader = checkBalanceCmd.ExecuteReader())
+            try
             {
-                if (reader.Read())
+                if (action == "ยืม")
                 {
-                    int total = Convert.ToInt32(reader["จำนวนทั้งหมด"]);
-                    int totalSum = Convert.ToInt32(reader["totalSum"]);
-                    if (total != totalSum)
-                    {
-                        MessageBox.Show("จำนวนรวมไม่สอดคล้องกับข้อมูลจริง กรุณาตรวจสอบ");
-                    }
-                }
-            
+                    // ดำเนินการอัปเดตการยืม
+                    string updateBorrowQuery = @"UPDATE Equipment 
+                                         SET จำนวนการยืม = จำนวนการยืม + @amount, 
+                                             จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @amount
+                                         WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+                    SQLiteCommand updateBorrowCmd = new SQLiteCommand(updateBorrowQuery, equipment_conn);
+                    updateBorrowCmd.Parameters.AddWithValue("@amount", amount);
+                    updateBorrowCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
+                    updateBorrowCmd.ExecuteNonQuery();
 
-            // เคลียร์ฟอร์ม
+                    // บันทึกข้อมูลใน Messages
+                    string insertBorrowMessage = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ, จำนวน) 
+                                           VALUES (@Text1, @Text2, @History, @Date, @Time, @User, @Note, @many)";
+                    SQLiteCommand borrowMessageCmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
+                    borrowMessageCmd.Parameters.AddWithValue("@Text1", text1);
+                    borrowMessageCmd.Parameters.AddWithValue("@Text2", text2);
+                    borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม จำนวน({amount})");
+                    borrowMessageCmd.Parameters.AddWithValue("@Date", DateTime.Now.ToShortDateString());
+                    borrowMessageCmd.Parameters.AddWithValue("@Time", DateTime.Now.ToShortTimeString());
+                    borrowMessageCmd.Parameters.AddWithValue("@User", user);
+                    borrowMessageCmd.Parameters.AddWithValue("@Note", note);
+                    borrowMessageCmd.Parameters.AddWithValue("@many", many);
+                    borrowMessageCmd.ExecuteNonQuery();
+                }
+                else if (action == "คืน")
+                {
+                    // ดำเนินการอัปเดตการคืน
+                    string updateReturnQuery = @"UPDATE Equipment 
+                                         SET จำนวนการคืน = จำนวนการคืน + @amount, 
+                                             จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน + @amount,
+                                             จำนวนการยืม = จำนวนการยืม - @amount
+                                         WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+                    SQLiteCommand updateReturnCmd = new SQLiteCommand(updateReturnQuery, equipment_conn);
+                    updateReturnCmd.Parameters.AddWithValue("@amount", amount);
+                    updateReturnCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
+                    updateReturnCmd.ExecuteNonQuery();
+
+                    // บันทึกข้อมูลใน Messages
+                    string insertReturnMessage = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ, จำนวน) 
+                                           VALUES (@Text1, @Text2, @History, @Date, @Time, @User, @Note, @many)";
+                    SQLiteCommand returnMessageCmd = new SQLiteCommand(insertReturnMessage, sqlite_conn);
+                    returnMessageCmd.Parameters.AddWithValue("@Text1", text1);
+                    returnMessageCmd.Parameters.AddWithValue("@Text2", text2);
+                    returnMessageCmd.Parameters.AddWithValue("@History", $"คืน จำนวน({amount})");
+                    returnMessageCmd.Parameters.AddWithValue("@Date", DateTime.Now.ToShortDateString());
+                    returnMessageCmd.Parameters.AddWithValue("@Time", DateTime.Now.ToShortTimeString());
+                    returnMessageCmd.Parameters.AddWithValue("@User", user);
+                    returnMessageCmd.Parameters.AddWithValue("@Note", note);
+                    returnMessageCmd.Parameters.AddWithValue("@many", many);
+                    returnMessageCmd.ExecuteNonQuery();
+                }
+
+                // เคลียร์ฟอร์ม
+                ClearForm();
+
+                // โหลดข้อมูลใหม่
+                LoadData();
+
+                MessageBox.Show($"บันทึกข้อมูลการ{action}สำเร็จ");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ClearForm()
+        {
             comboBox1.SelectedIndex = -1;
             richTextBox2.Clear();
             richTextBox1.Clear();
             richTextBox4.Clear();
             richTextBox5.Clear();
             richTextBox6.Clear();
-
-            LoadData();
-
-
-
-            var apiClient = new ApiClient();
-                await apiClient.SendDataToApiAsync(text1, text2, text3, text4);
-            }
+            combobox2.SelectedIndex = -1;
         }
+
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -171,6 +193,7 @@ namespace Demov0._1
                 dataGridView1.Columns["id"].Width = 30;
                 dataGridView1.Columns["วัน_เดือน_ปี"].Width = 130;
                 dataGridView1.Columns["เวลา"].Width = 70;
+                dataGridView1.Columns["จำนวน"].Visible = false;
             }
             catch (Exception ex)
             {
