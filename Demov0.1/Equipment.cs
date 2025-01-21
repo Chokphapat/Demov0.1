@@ -290,5 +290,10 @@ namespace Demov0._1
                 MessageBox.Show("Error searching data: " + ex.Message);
             }
         }
+
+        private void ชนิด_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

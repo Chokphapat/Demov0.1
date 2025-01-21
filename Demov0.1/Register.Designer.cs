@@ -44,7 +44,7 @@
             this.ชื่อผู็ใช้งาน.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.ชื่อผู็ใช้งาน.Location = new System.Drawing.Point(6, 81);
             this.ชื่อผู็ใช้งาน.Name = "ชื่อผู็ใช้งาน";
-            this.ชื่อผู็ใช้งาน.Size = new System.Drawing.Size(90, 36);
+            this.ชื่อผู็ใช้งาน.Size = new System.Drawing.Size(97, 37);
             this.ชื่อผู็ใช้งาน.TabIndex = 0;
             this.ชื่อผู็ใช้งาน.Text = "ชื่อผู้ใช้งาน";
             // 
@@ -54,7 +54,7 @@
             this.label2.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.label2.Location = new System.Drawing.Point(6, 210);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(76, 36);
+            this.label2.Size = new System.Drawing.Size(81, 37);
             this.label2.TabIndex = 1;
             this.label2.Text = "รหัสผ่าน";
             // 
@@ -75,7 +75,7 @@
             this.label3.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.label3.Location = new System.Drawing.Point(112, 18);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(111, 36);
+            this.label3.Size = new System.Drawing.Size(119, 37);
             this.label3.TabIndex = 3;
             this.label3.Text = "สมัครผู้ใช้งาน";
             this.label3.Click += new System.EventHandler(this.label3_Click);
@@ -102,6 +102,7 @@
             // 
             // panel1
             // 
+            this.panel1.BackColor = System.Drawing.Color.LightSkyBlue;
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.richTextBox2);

@@ -39,7 +39,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.richTextBox5 = new System.Windows.Forms.RichTextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.richTextBox4 = new System.Windows.Forms.RichTextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
@@ -52,6 +51,9 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.combobox2 = new System.Windows.Forms.ComboBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.flowLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -62,8 +64,9 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
-            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonShadow;
+            this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.GridColor = System.Drawing.SystemColors.Desktop;
             this.dataGridView1.Location = new System.Drawing.Point(4, 55);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.dataGridView1.Name = "dataGridView1";
@@ -175,24 +178,14 @@
             this.label6.TabIndex = 14;
             this.label6.Text = "ชื่อผู้ใช้";
             // 
-            // richTextBox4
-            // 
-            this.richTextBox4.Location = new System.Drawing.Point(5, 429);
-            this.richTextBox4.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.richTextBox4.Name = "richTextBox4";
-            this.richTextBox4.Size = new System.Drawing.Size(350, 37);
-            this.richTextBox4.TabIndex = 11;
-            this.richTextBox4.Text = "";
-            this.richTextBox4.TextChanged += new System.EventHandler(this.richTextBox4_TextChanged);
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(-2, 386);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(53, 37);
+            this.label5.Size = new System.Drawing.Size(240, 46);
             this.label5.TabIndex = 13;
-            this.label5.Text = "เวลา";
+            this.label5.Text = "เวลา (ชั่งโมง และ นาที)";
             this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // dateTimePicker1
@@ -267,9 +260,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label9);
+            this.panel1.Controls.Add(this.textBox3);
             this.panel1.Controls.Add(this.richTextBox1);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.combobox2);
+            this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.comboBox1);
@@ -284,7 +280,6 @@
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.dateTimePicker1);
-            this.panel1.Controls.Add(this.richTextBox4);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Location = new System.Drawing.Point(36, 12);
             this.panel1.Name = "panel1";
@@ -318,9 +313,37 @@
             "คืน"});
             this.combobox2.Location = new System.Drawing.Point(5, 227);
             this.combobox2.Name = "combobox2";
-            this.combobox2.Size = new System.Drawing.Size(110, 44);
+            this.combobox2.Size = new System.Drawing.Size(71, 44);
             this.combobox2.TabIndex = 19;
             this.combobox2.SelectedIndexChanged += new System.EventHandler(this.combobox2_SelectedIndexChanged);
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(5, 426);
+            this.textBox2.Multiline = true;
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(45, 43);
+            this.textBox2.TabIndex = 8;
+            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(82, 426);
+            this.textBox3.Multiline = true;
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(43, 43);
+            this.textBox3.TabIndex = 22;
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(54, 429);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(22, 37);
+            this.label9.TabIndex = 23;
+            this.label9.Text = ":";
+            this.label9.Click += new System.EventHandler(this.label9_Click);
             // 
             // Crud
             // 
@@ -329,7 +352,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
-            this.BackColor = System.Drawing.Color.Gainsboro;
+            this.BackColor = System.Drawing.Color.LightSkyBlue;
             this.ClientSize = new System.Drawing.Size(1540, 801);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.flowLayoutPanel2);
@@ -360,7 +383,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.RichTextBox richTextBox5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.RichTextBox richTextBox4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Label label4;
@@ -373,6 +395,9 @@
         private System.Windows.Forms.ComboBox combobox2;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label9;
     }
 }
 

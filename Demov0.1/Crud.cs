@@ -82,6 +82,9 @@ namespace Demov0._1
             string note = richTextBox6.Text; // หมายเหตุ
             string action = combobox2.SelectedItem?.ToString(); // เลือกยืม/คืน
             string many = richTextBox1.Text;
+            string hours = textBox2.Text;
+            string minutes = textBox3.Text;
+            string Time = dateTimePicker1.Text;
             int amount = 0;
 
             if (string.IsNullOrEmpty(text1) || string.IsNullOrEmpty(action) || !int.TryParse(richTextBox1.Text, out amount) || amount <= 0)
@@ -112,8 +115,8 @@ namespace Demov0._1
                     borrowMessageCmd.Parameters.AddWithValue("@Text2", text2);
                     //borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม จำนวน({amount})");
                     borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม");
-                    borrowMessageCmd.Parameters.AddWithValue("@Date", DateTime.Now.ToShortDateString());
-                    borrowMessageCmd.Parameters.AddWithValue("@Time", DateTime.Now.ToShortTimeString());
+                    borrowMessageCmd.Parameters.AddWithValue("@Date", Time);
+                    borrowMessageCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}");
                     borrowMessageCmd.Parameters.AddWithValue("@User", user);
                     borrowMessageCmd.Parameters.AddWithValue("@Note", note);
                     borrowMessageCmd.Parameters.AddWithValue("@many", many);
@@ -140,8 +143,8 @@ namespace Demov0._1
                     returnMessageCmd.Parameters.AddWithValue("@Text2", text2);
                     //returnMessageCmd.Parameters.AddWithValue("@History", $"คืน จำนวน({amount})");
                     returnMessageCmd.Parameters.AddWithValue("@History", $"คืน");
-                    returnMessageCmd.Parameters.AddWithValue("@Date", DateTime.Now.ToShortDateString());
-                    returnMessageCmd.Parameters.AddWithValue("@Time", DateTime.Now.ToShortTimeString());
+                    returnMessageCmd.Parameters.AddWithValue("@Date", Time);
+                    returnMessageCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}");
                     returnMessageCmd.Parameters.AddWithValue("@User", user);
                     returnMessageCmd.Parameters.AddWithValue("@Note", note);
                     returnMessageCmd.Parameters.AddWithValue("@many", many);
@@ -167,7 +170,9 @@ namespace Demov0._1
             comboBox1.SelectedIndex = -1;
             richTextBox2.Clear();
             richTextBox1.Clear();
-            richTextBox4.Clear();
+            //richTextBox4.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
             richTextBox5.Clear();
             richTextBox6.Clear();
             combobox2.SelectedIndex = -1;
@@ -202,88 +207,11 @@ namespace Demov0._1
                 MessageBox.Show("Error loading data: " + ex.Message);
             }
         }
-
-        
-
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void richTextBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void richTextBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
+ 
         private void Form1_Activated(object sender, EventArgs e)
         {
             LoadData();
         }
-
-        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel3_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void richTextBox4_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void richTextBox5_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void richTextBox6_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void button3_Click(object sender, EventArgs e)
         {
             if (index >= 0)
@@ -315,6 +243,8 @@ namespace Demov0._1
 
         private void button4_Click(object sender, EventArgs e)
         {
+            string hours = textBox2.Text;
+            string minutes = textBox3.Text;
             if (index >= 0)
             {
                 DataGridViewRow row = dataGridView1.Rows[index];
@@ -326,7 +256,7 @@ namespace Demov0._1
                 ชนิดอุปกรณ์ = @Text2, 
                 ประวัติการยืมคืน = @Text3, 
                 วัน_เดือน_ปี = @Text4, 
-                เวลา = @Text5, 
+                เวลา = @Time, 
                 ชื่อผู้ใช้ = @Text6, 
                 หมายเหตุ = @Text7 
             WHERE Id = @Id";
@@ -335,7 +265,7 @@ namespace Demov0._1
                 updateCmd.Parameters.AddWithValue("@Text2", richTextBox2.Text);
                 updateCmd.Parameters.AddWithValue("@Text3", combobox2.Text);
                 updateCmd.Parameters.AddWithValue("@Text4", dateTimePicker1.Text);
-                updateCmd.Parameters.AddWithValue("@Text5", richTextBox4.Text);
+                updateCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}"); ;
                 updateCmd.Parameters.AddWithValue("@Text6", richTextBox5.Text);
                 updateCmd.Parameters.AddWithValue("@Text7", richTextBox6.Text);
                 updateCmd.Parameters.AddWithValue("@Id", id);
@@ -362,10 +292,35 @@ namespace Demov0._1
                 richTextBox2.Text = row.Cells[2].Value?.ToString();
                 combobox2.Text = row.Cells[3].Value?.ToString();
                 dateTimePicker1.Text = row.Cells[4].Value?.ToString();
-                richTextBox4.Text = row.Cells[5].Value?.ToString();
+                //richTextBox4.Text = row.Cells[5].Value?.ToString();
                 richTextBox5.Text = row.Cells[6].Value?.ToString();
                 richTextBox6.Text = row.Cells[7].Value?.ToString();
                 richTextBox1.Text= row.Cells[8].Value?.ToString();
+
+                string value = row.Cells[5].Value?.ToString();
+
+                if (!string.IsNullOrEmpty(value))
+                {
+                    
+                    string[] parts = value.Split(':');
+
+                    // ตรวจสอบว่ามีข้อมูลเพียงพอ
+                    if (parts.Length == 2)
+                    {
+                        textBox2.Text = parts[0]; // รับส่วนแรก เช่น 12
+                        textBox3.Text = parts[1]; // รับส่วนหลัง เช่น 16
+                    }
+                    else
+                    {
+                        textBox2.Text = ""; // กรณีที่ไม่มีข้อมูลที่ต้องการ
+                        textBox3.Text = "";
+                    }
+                }
+                else
+                {
+                    textBox2.Text = ""; // กรณีค่าเป็น null หรือว่าง
+                    textBox3.Text = "";
+                }
             }
         }
 
@@ -461,6 +416,108 @@ namespace Demov0._1
         private void richTextBox1_TextChanged_1(object sender, EventArgs e)
         {
 
+        }
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox4_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox6_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox2.Text.Length > 2)
+            {
+                // ตัดข้อความให้เหลือเพียง 2 ตัวแรก
+                textBox2.Text = textBox2.Text.Substring(0, 2);
+
+                // ย้ายตำแหน่งเคอร์เซอร์ไปยังตำแหน่งท้ายสุด
+                textBox2.SelectionStart = textBox2.Text.Length;
+            }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox3.Text.Length > 2)
+            {
+                // ตัดข้อความให้เหลือเพียง 2 ตัวแรก
+                textBox3.Text = textBox3.Text.Substring(0, 2);
+
+                // ย้ายตำแหน่งเคอร์เซอร์ไปยังตำแหน่งท้ายสุด
+                textBox3.SelectionStart = textBox3.Text.Length;
+            }
         }
     }
 }

@@ -79,7 +79,7 @@
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.panel1.BackColor = System.Drawing.Color.DodgerBlue;
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Location = new System.Drawing.Point(3, 3);
@@ -125,6 +125,7 @@
             // 
             this.dataGridView2.AllowUserToAddRows = false;
             this.dataGridView2.AllowUserToDeleteRows = false;
+            this.dataGridView2.BackgroundColor = System.Drawing.Color.White;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
@@ -366,6 +367,7 @@
             this.ชนิด.Size = new System.Drawing.Size(326, 49);
             this.ชนิด.TabIndex = 4;
             this.ชนิด.Text = "";
+            this.ชนิด.TextChanged += new System.EventHandler(this.ชนิด_TextChanged);
             // 
             // ชื่อ
             // 
@@ -412,6 +414,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.LightSkyBlue;
             this.ClientSize = new System.Drawing.Size(2571, 1193);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);

@@ -40,7 +40,7 @@
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.Gray;
+            this.panel1.BackColor = System.Drawing.Color.DodgerBlue;
             this.panel1.Controls.Add(this.button5);
             this.panel1.Controls.Add(this.button4);
             this.panel1.Controls.Add(this.button3);
