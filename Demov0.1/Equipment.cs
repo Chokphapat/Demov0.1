@@ -50,6 +50,7 @@ namespace Demov0._1
                 dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 
 
+
             }
             catch (Exception ex)
             {

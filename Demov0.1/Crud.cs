@@ -250,6 +250,57 @@ namespace Demov0._1
                 DataGridViewRow row = dataGridView1.Rows[index];
                 int id = Convert.ToInt32(row.Cells["Id"].Value);
 
+                // ดึงค่าก่อนหน้า
+                string previousAction = row.Cells["ประวัติการยืมคืน"].Value?.ToString(); // ตัวอย่าง: "ยืม จำนวน(10)"
+                int previousAmount = 0;
+                string actionType = ""; // ใช้ตรวจสอบว่าเป็น "ยืม" หรือ "คืน"
+
+                if (!string.IsNullOrEmpty(previousAction))
+                {
+                    var match = System.Text.RegularExpressions.Regex.Match(previousAction, @"(ยืม|คืน) จำนวน\((\d+)\)");
+                    if (match.Success)
+                    {
+                        actionType = match.Groups[1].Value; // "ยืม" หรือ "คืน"
+                        previousAmount = int.Parse(match.Groups[2].Value); // จำนวนก่อนหน้า
+                    }
+                }
+
+                // ค่าที่แก้ไขใหม่
+                int newAmount = int.Parse(richTextBox1.Text); // ค่าจำนวนใหม่
+
+                // คำนวณความแตกต่าง
+                int difference = newAmount - previousAmount;
+
+                // อัปเดตในฐานข้อมูล Equipment
+                string updateEquipmentQuery = "";
+                if (actionType == "ยืม")
+                {
+                    // ถ้าเป็นการยืม
+                    updateEquipmentQuery = @"
+                UPDATE Equipment 
+                SET จำนวนการยืม = จำนวนการยืม + @Difference, 
+                    จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @Difference
+                WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+                }
+                else if (actionType == "คืน")
+                {
+                    // ถ้าเป็นการคืน
+                    updateEquipmentQuery = @"
+                UPDATE Equipment 
+                SET จำนวนการคืน = จำนวนการคืน + @Difference, 
+                    จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน + @Difference
+                WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+                }
+
+                if (!string.IsNullOrEmpty(updateEquipmentQuery))
+                {
+                    SQLiteCommand updateEquipmentCmd = new SQLiteCommand(updateEquipmentQuery, equipment_conn);
+                    updateEquipmentCmd.Parameters.AddWithValue("@Difference", difference);
+                    updateEquipmentCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", comboBox1.Text);
+                    updateEquipmentCmd.ExecuteNonQuery();
+                }
+
+
                 string updateQuery = @"
             UPDATE Messages 
             SET ชื่ออุปกรณ์ = @Text1, 
@@ -258,7 +309,8 @@ namespace Demov0._1
                 วัน_เดือน_ปี = @Text4, 
                 เวลา = @Time, 
                 ชื่อผู้ใช้ = @Text6, 
-                หมายเหตุ = @Text7 
+                หมายเหตุ = @Text7,
+                จำนวน = @rich1
             WHERE Id = @Id";
                 SQLiteCommand updateCmd = new SQLiteCommand(updateQuery, sqlite_conn);
                 updateCmd.Parameters.AddWithValue("@Text1", comboBox1.Text);
@@ -268,6 +320,7 @@ namespace Demov0._1
                 updateCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}"); ;
                 updateCmd.Parameters.AddWithValue("@Text6", richTextBox5.Text);
                 updateCmd.Parameters.AddWithValue("@Text7", richTextBox6.Text);
+                updateCmd.Parameters.AddWithValue("@rich1", richTextBox1.Text);
                 updateCmd.Parameters.AddWithValue("@Id", id);
 
                 updateCmd.ExecuteNonQuery();
