@@ -8,18 +8,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Demov0._1
 {
     public partial class Equipment : Form
     {
         private SQLiteConnection sqlite_conn;
-        int selectedIndex = -1;
+        private int selectedIndex = -1;
+
+        private int currentPage = 1; // หน้าปัจจุบัน
+        private int pageSize = 10; // จำนวนแถวต่อหน้า
+        private int totalRecords = 0; // จำนวนรายการทั้งหมด
+        private int totalPages = 0; // จำนวนหน้าทั้งหมด
 
         public Equipment()
         {
             InitializeComponent();
-
             sqlite_conn = new SQLiteConnection("Data Source=DatabaseAll.db;Version=3;");
             sqlite_conn.Open();
             LoadData();
@@ -39,25 +44,60 @@ namespace Demov0._1
         {
             try
             {
+                string searchValue = textBox1.Text.Trim();
+                string query = $@"
+                        SELECT * FROM Equipment
+                        WHERE รหัสอุปกรณ์ LIKE @SearchValue
+                        OR ชื่ออุปกรณ์ LIKE @SearchValue
+                        OR ชนิดอุปกรณ์ LIKE @SearchValue
+                        LIMIT @PageSize OFFSET @Offset";
 
-                string selectQuery = "SELECT * FROM Equipment";
-                SQLiteCommand selectCmd = new SQLiteCommand(selectQuery, sqlite_conn);
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(selectCmd);
+                SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
+                cmd.Parameters.AddWithValue("@SearchValue", $"%{searchValue}%");
+                cmd.Parameters.AddWithValue("@PageSize", pageSize);
+                cmd.Parameters.AddWithValue("@Offset", (currentPage - 1) * pageSize);
+
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
                 DataTable dataTable = new DataTable();
                 adapter.Fill(dataTable);
 
                 dataGridView2.DataSource = dataTable;
                 dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                
 
-
+                UpdatePaginationInfo();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading data: " + ex.Message);
             }
         }
+        private void UpdatePaginationInfo()
+        {
+            try
+            {
+                // คำนวณจำนวนรายการทั้งหมด
+                string countQuery = @"
+                    SELECT COUNT(*) FROM Equipment
+                    WHERE รหัสอุปกรณ์ LIKE @SearchValue
+                    OR ชื่ออุปกรณ์ LIKE @SearchValue
+                    OR ชนิดอุปกรณ์ LIKE @SearchValue";
 
+                SQLiteCommand countCmd = new SQLiteCommand(countQuery, sqlite_conn);
+                countCmd.Parameters.AddWithValue("@SearchValue", $"%{textBox1.Text.Trim()}%");
+                totalRecords = Convert.ToInt32(countCmd.ExecuteScalar());
+
+                // คำนวณจำนวนหน้าทั้งหมด
+                totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+                // อัปเดต Label
+                label12.Text = $"หน้าที่ {currentPage} จาก {totalPages}";
+                label13.Text = $"จำนวนทั้งหมด: {totalRecords}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating pagination info: " + ex.Message);
+            }
+        }
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             
@@ -83,7 +123,16 @@ namespace Demov0._1
         {
 
         }
-
+        private void Equipment_Load(object sender, EventArgs e)
+        {
+            // ตั้งค่าคอมโบบ็อกซ์สำหรับจำนวนแถว
+            comboBox3.Items.Clear();
+            comboBox3.Items.Add("ทั้งหมด");
+            comboBox3.Items.Add("20");
+            comboBox3.Items.Add("30");
+            comboBox3.Items.Add("50");
+            comboBox3.SelectedIndex = 1; // ตั้งค่าเริ่มต้น (เช่น 20 แถว)
+        }
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && e.RowIndex < dataGridView2.Rows.Count)
@@ -100,12 +149,7 @@ namespace Demov0._1
                 พร้อม.Text = row.Cells["จำนวนพร้อมใช้งาน"].Value.ToString();
                 ไม่พร้อม.Text = row.Cells["จำนวนไม่พร้อมใช้งาน"].Value.ToString();
                 หาย.Text = row.Cells["จำนวนหาย"].Value.ToString();
-
-
-                
             }
-            
-
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -187,7 +231,7 @@ namespace Demov0._1
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e) // ลบข้อมูล
         {
             if (selectedIndex >= 0)
             {
@@ -214,7 +258,7 @@ namespace Demov0._1
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e) // แก้ไขข้อมูล
         {
             if (selectedIndex >= 0)
             {
@@ -261,6 +305,8 @@ namespace Demov0._1
                 MessageBox.Show("กรุณาเลือกข้อมูลที่ต้องการแก้ไข");
             }
         }
+    
+
 
         private void panel3_Paint(object sender, PaintEventArgs e)
         {
@@ -284,17 +330,89 @@ namespace Demov0._1
                     adapter.Fill(dataTable);
 
                     dataGridView2.DataSource = dataTable;
+                    
                 }
+                currentPage = 1; // รีเซ็ตเป็นหน้าแรกเมื่อมีการค้นหาใหม่
+                LoadData();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error searching data: " + ex.Message);
             }
         }
+        
 
         private void ชนิด_TextChanged(object sender, EventArgs e)
         {
 
         }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedValue = comboBox3.SelectedItem?.ToString();
+
+            if (selectedValue == "ทั้งหมด")
+            {
+                pageSize = totalRecords; // แสดงทั้งหมด
+            }
+            else if (int.TryParse(selectedValue, out int selectedPageSize))
+            {
+                pageSize = selectedPageSize; // ตั้งค่าจำนวนแถวใหม่
+            }
+            else
+            {
+                pageSize = 10; // ค่าดีฟอลต์ถ้าการเลือกผิดพลาด
+            }
+
+            currentPage = 1; // รีเซ็ตเป็นหน้าแรก
+            LoadData(); // โหลดข้อมูลใหม่ตามจำนวนแถว
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            currentPage = 1;
+            LoadData();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadData();
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (currentPage < totalPages)
+            {
+                currentPage++;
+                LoadData();
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            currentPage = totalPages;
+            LoadData();
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
+        }
+        
+
     }
 }

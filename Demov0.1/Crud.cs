@@ -197,10 +197,11 @@ namespace Demov0._1
 
                 dataGridView1.DataSource = dataTable;
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dataGridView1.Columns["id"].Width = 30;
+                dataGridView1.Columns["id"].Width = 50;
                 dataGridView1.Columns["วัน_เดือน_ปี"].Width = 130;
                 dataGridView1.Columns["เวลา"].Width = 70;
                 dataGridView1.Columns["จำนวน"].Visible = false;
+                
             }
             catch (Exception ex)
             {
@@ -411,39 +412,21 @@ namespace Demov0._1
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
-            if (comboBox1.SelectedItem != null)
+            string selectedValue = comboBox3.SelectedItem.ToString();
+            if (selectedValue == "ทั้งหมด")
             {
-                string selectedValue = comboBox1.SelectedItem.ToString();
-
-                
-                richTextBox2.Clear();
-
-                try
-                {
-                    string selectQuery = "SELECT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                    SQLiteCommand cmd = new SQLiteCommand(selectQuery, equipment_conn);
-                    cmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", selectedValue);
-
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            richTextBox2.Text = reader["ชนิดอุปกรณ์"].ToString();
-                        }
-                        else
-                        {
-                            MessageBox.Show("ไม่พบข้อมูลชนิดอุปกรณ์สำหรับอุปกรณ์นี้", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("เกิดข้อผิดพลาด: " + ex.Message);
-                }
+                pageSize = totalRecords; // แสดงทั้งหมด
+                currentPage = 1; // รีเซ็ตเป็นหน้าแรก
             }
+            else if (int.TryParse(selectedValue, out int newPageSize))
+            {
+                pageSize = newPageSize;
+                currentPage = 1; // รีเซ็ตเป็นหน้าแรก
+            }
+
+            LoadPagedData();
         }
 
 
@@ -467,6 +450,8 @@ namespace Demov0._1
                     adapter.Fill(dataTable);
 
                     dataGridView1.DataSource = dataTable;
+                    currentPage = 1; // รีเซ็ตเป็นหน้าแรกเมื่อมีการค้นหาใหม่
+                    LoadPagedData();
                 }
             }
             catch (Exception ex)
@@ -489,7 +474,61 @@ namespace Demov0._1
             }
             base.OnFormClosed(e);
         }
+        private int currentPage = 1; // หน้าปัจจุบัน
+        private int pageSize = 10; // จำนวนแถวต่อหน้า
+        private int totalRecords = 0; // จำนวนแถวทั้งหมด
+        private int totalPages = 0; // จำนวนหน้าทั้งหมด
 
+        private void LoadPagedData()
+        {
+            try
+            {
+                string searchValue = textBox1.Text.Trim();
+                string query = $@"
+            SELECT * FROM Messages
+            WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
+            OR ชนิดอุปกรณ์ LIKE '%{searchValue}%'
+            OR ประวัติการยืมคืน LIKE '%{searchValue}%'
+            OR วัน_เดือน_ปี LIKE '%{searchValue}%'
+            OR ชื่อผู้ใช้ LIKE '%{searchValue}%'
+            LIMIT @PageSize OFFSET @Offset";
+
+                SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
+                cmd.Parameters.AddWithValue("@PageSize", pageSize);
+                cmd.Parameters.AddWithValue("@Offset", (currentPage - 1) * pageSize);
+
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                dataGridView1.DataSource = dataTable;
+
+                // อัปเดตข้อมูลจำนวนทั้งหมดและจำนวนหน้า
+                UpdatePaginationInfo(searchValue);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading data: {ex.Message}");
+            }
+        }
+        private void UpdatePaginationInfo(string searchValue)
+        {
+            string countQuery = $@"
+        SELECT COUNT(*) FROM Messages
+        WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
+        OR ชนิดอุปกรณ์ LIKE '%{searchValue}%'
+        OR ประวัติการยืมคืน LIKE '%{searchValue}%'
+        OR วัน_เดือน_ปี LIKE '%{searchValue}%'
+        OR ชื่อผู้ใช้ LIKE '%{searchValue}%'";
+
+            SQLiteCommand countCmd = new SQLiteCommand(countQuery, sqlite_conn);
+            totalRecords = Convert.ToInt32(countCmd.ExecuteScalar());
+            totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            // อัปเดต Label
+            label11.Text = $"หน้าที่ {currentPage} จาก {totalPages}";
+            label12.Text = $"จำนวนที่ค้นหาเจอ: {totalRecords}";
+        }
         private void combobox2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -606,5 +645,68 @@ namespace Demov0._1
                 textBox3.SelectionStart = textBox3.Text.Length;
             }
         }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button2_Click_2(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+       
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            currentPage = 1;
+            LoadPagedData();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadPagedData();
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (currentPage < totalPages)
+            {
+                currentPage++;
+                LoadPagedData();
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            currentPage = totalPages;
+            LoadPagedData();
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+            //เเสงจำนวนหน้า #
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+            //เเสดงจำนวนที่หาเจอ
+        }
+        
     }
 }
