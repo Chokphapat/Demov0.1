@@ -501,16 +501,24 @@ namespace Demov0._1
                 DataTable dataTable = new DataTable();
                 adapter.Fill(dataTable);
 
-                dataGridView1.DataSource = dataTable;
+                if (dataTable.Rows.Count > 0)
+                {
+                    dataGridView1.DataSource = dataTable;
+                }
+                else
+                {
+                    //MessageBox.Show("ไม่มีข้อมูลที่ตรงกับการค้นหา");
+                }
 
-                // อัปเดตข้อมูลจำนวนทั้งหมดและจำนวนหน้า
+                // อัปเดตข้อมูล Pagination
                 UpdatePaginationInfo(searchValue);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading data: {ex.Message}");
+                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}");
             }
         }
+
         private void UpdatePaginationInfo(string searchValue)
         {
             string countQuery = $@"
@@ -523,7 +531,16 @@ namespace Demov0._1
 
             SQLiteCommand countCmd = new SQLiteCommand(countQuery, sqlite_conn);
             totalRecords = Convert.ToInt32(countCmd.ExecuteScalar());
-            totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            // ตรวจสอบค่าที่ถูกต้อง
+            if (totalRecords > 0 && pageSize > 0)
+            {
+                totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+            }
+            else
+            {
+                totalPages = 1; // กำหนดค่าหน้าทั้งหมดเป็น 1 อย่างน้อย
+            }
 
             // อัปเดต Label
             label11.Text = $"หน้าที่ {currentPage} จาก {totalPages}";
@@ -658,8 +675,15 @@ namespace Demov0._1
 
         private void button2_Click_2(object sender, EventArgs e)
         {
+            // ตรวจสอบว่ากำลังเลือก "ทั้งหมด" หรือมีการกรองด้วยคำค้นหา
+            string searchQuery = string.IsNullOrEmpty(textBox1.Text) ? "%" : textBox1.Text;
+            int pageSize = comboBox3.SelectedItem != null ? int.Parse(comboBox3.SelectedItem.ToString()) : 10;
 
+            // เปิดหน้ารายงานและส่งข้อมูลที่จำเป็น
+            var reportForm = new Report(sqlite_conn, "CRUD", totalRecords, currentPage, pageSize, searchQuery);
+            reportForm.Show();
         }
+
 
         private void label10_Click_1(object sender, EventArgs e)
         {
