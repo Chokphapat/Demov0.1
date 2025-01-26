@@ -33,12 +33,14 @@ namespace Demov0._1
             // เรียกใช้ฟังก์ชันเพื่อแสดงค่าที่เกี่ยวข้อง
             DisplayReportDetails();
         }
+        
 
         private void DisplayReportDetails()
         {
             // ตัวอย่างการแสดงผล
-            labeltotalPages.Text = $"จาก {totalPages}";
+           
             labelCurrentPage.Text = $"หน้า {currentPage}";
+            labeltotalPages.Text = $"จาก {totalPages}";
             //labelPageSize.Text = $" {pageSize}";
         }
         private void Form4_Load(object sender, EventArgs e)
@@ -78,7 +80,7 @@ namespace Demov0._1
                 // ตรวจสอบว่ามีข้อมูลหรือไม่
                 if (dataTable.Rows.Count == 0)
                 {
-                    MessageBox.Show("ไม่พบข้อมูลที่ต้องการ", "ข้อมูลว่าง", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //MessageBox.Show("ไม่พบข้อมูลที่ต้องการ", "ข้อมูลว่าง", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 

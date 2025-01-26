@@ -475,7 +475,7 @@ namespace Demov0._1
             base.OnFormClosed(e);
         }
         private int currentPage = 1; // หน้าปัจจุบัน
-        private int pageSize = 10; // จำนวนแถวต่อหน้า
+        private int pageSize = 100; // จำนวนแถวต่อหน้า
         private int totalRecords = 0; // จำนวนแถวทั้งหมด
         private int totalPages = 0; // จำนวนหน้าทั้งหมด
 
@@ -677,11 +677,11 @@ namespace Demov0._1
         {
             // ตรวจสอบว่ากำลังเลือก "ทั้งหมด" หรือมีการกรองด้วยคำค้นหา
             string searchQuery = string.IsNullOrEmpty(textBox1.Text) ? "%" : textBox1.Text;
-            int pageSize = comboBox3.SelectedItem != null ? int.Parse(comboBox3.SelectedItem.ToString()) : 10;
+    
 
-            // เปิดหน้ารายงานและส่งข้อมูลที่จำเป็น
-            var reportForm = new Report(sqlite_conn, "CRUD", totalRecords, currentPage, pageSize, searchQuery);
-            reportForm.Show();
+    // เปิดหน้ารายงานและส่งข้อมูลที่จำเป็น
+    var reportForm = new Report(sqlite_conn, "CRUD", totalPages, currentPage, pageSize, searchQuery);
+    reportForm.Show();
         }
 
 
