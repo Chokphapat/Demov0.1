@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using iTextSharp.text.pdf;
+using iTextSharp.text;
+using System;
 using System.Data;
 using System.Data.SQLite;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Demov0._1
@@ -46,6 +45,11 @@ namespace Demov0._1
         private void Form4_Load(object sender, EventArgs e)
         {
             // แสดงวันที่ปัจจุบัน
+            currentPage = 1;
+            totalPages = 1;
+            if (currentPage <= 0) currentPage = 1;
+            if (totalPages <= 0) totalPages = 1;
+
             label3.Text = DateTime.Now.ToString("dd/MM/yyyy");
 
             // ตั้งค่าหัวข้อรายงานและโหลดข้อมูล
@@ -69,13 +73,20 @@ namespace Demov0._1
         {
             try
             {
-                string query = "SELECT * FROM Messages WHERE ชื่ออุปกรณ์ LIKE @SearchQuery";
+                string query = $"SELECT * FROM Messages WHERE ชื่ออุปกรณ์ LIKE '%{searchQuery}%' LIMIT {pageSize} OFFSET {(currentPage - 1) * pageSize}";
+
                 SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
                 cmd.Parameters.AddWithValue("@SearchQuery", searchQuery);
 
                 SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
                 DataTable dataTable = new DataTable();
                 adapter.Fill(dataTable);
+
+                if (dataTable.Rows.Count == 0)
+                {
+                    MessageBox.Show("ไม่พบข้อมูลที่ตรงกับการค้นหา", "ข้อมูลว่าง", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
 
                 // ตรวจสอบว่ามีข้อมูลหรือไม่
                 if (dataTable.Rows.Count == 0)
@@ -94,6 +105,7 @@ namespace Demov0._1
                     AllowUserToAddRows = false,
                     AllowUserToDeleteRows = false,
                     AllowUserToOrderColumns = true // อนุญาตให้ผู้ใช้จัดเรียงคอลัมน์
+
                 };
 
                 // กำหนดค่าคอลัมน์ (กำหนดขนาดและซ่อนบางคอลัมน์ตามความต้องการ)
@@ -112,10 +124,12 @@ namespace Demov0._1
                 // ล้าง Panel และเพิ่ม DataGridView เข้าไป
                 panel1.Controls.Clear();
                 panel1.Controls.Add(dataGridView);
+                dataGridView.RowTemplate.Height = 30; // กำหนดความสูงของแถวให้เหมาะสม
+
             }
             catch (SQLiteException sqlEx)
             {
-                MessageBox.Show($"เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: {sqlEx.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show($"เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: {sqlEx.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
@@ -151,6 +165,77 @@ namespace Demov0._1
         {
 
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // จับภาพหน้าฟอร์ม
+                Bitmap formImage = CaptureForm();
+
+                // เลือกที่บันทึกไฟล์ PDF
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "PDF File|*.pdf",
+                    Title = "Save Report as PDF",
+                    FileName = "FormCapture.pdf"
+                };
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // แปลงภาพเป็น PDF
+                    SaveImageToPdf(formImage, saveFileDialog.FileName);
+
+                    MessageBox.Show("บันทึก PDF สำเร็จ!", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private Bitmap CaptureForm()
+        {
+            // สร้าง Bitmap สำหรับหน้าฟอร์ม
+            Bitmap bitmap = new Bitmap(this.Width, this.Height);
+            this.DrawToBitmap(bitmap, new System.Drawing.Rectangle(0, 0, this.Width, this.Height)); // ใช้ System.Drawing.Rectangle
+            return bitmap;
+        }
+
+
+        private void DrawToBitmap(Bitmap bitmap, iTextSharp.text.Rectangle rectangle)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        private void SaveImageToPdf(Bitmap image, string outputPath)
+        {
+            using (FileStream stream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                // ตั้งค่าเอกสาร PDF
+                Document document = new Document(PageSize.A4, 0, 0, 0, 0);
+                PdfWriter writer = PdfWriter.GetInstance(document, stream);
+                document.Open();
+
+                // แปลง Bitmap เป็น iTextSharp Image
+                using (MemoryStream imageStream = new MemoryStream())
+                {
+                    image.Save(imageStream, ImageFormat.Png);
+                    iTextSharp.text.Image pdfImage = iTextSharp.text.Image.GetInstance(imageStream.ToArray());
+                    pdfImage.ScaleToFit(document.PageSize.Width, document.PageSize.Height); // ปรับขนาดภาพให้เหมาะสม
+                    pdfImage.Alignment = Element.ALIGN_CENTER;
+
+                    // เพิ่มภาพใน PDF
+                    document.Add(pdfImage);
+                }
+
+                document.Close();
+                writer.Close();
+            }
+        }
+
 
     }
 }

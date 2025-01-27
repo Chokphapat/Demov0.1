@@ -74,7 +74,7 @@ namespace Demov0._1
             LoadData();
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             string text1 = comboBox1.SelectedItem?.ToString(); // ชื่ออุปกรณ์
             string text2 = richTextBox2.Text; // ชนิดอุปกรณ์
@@ -425,6 +425,12 @@ namespace Demov0._1
                 pageSize = newPageSize;
                 currentPage = 1; // รีเซ็ตเป็นหน้าแรก
             }
+            if (comboBox3.SelectedItem != null && int.TryParse(comboBox3.SelectedItem.ToString(), out int selectedPageSize))
+            {
+                pageSize = selectedPageSize;
+                currentPage = 1;
+                LoadPagedData();
+            }
 
             LoadPagedData();
         }
@@ -677,11 +683,12 @@ namespace Demov0._1
         {
             // ตรวจสอบว่ากำลังเลือก "ทั้งหมด" หรือมีการกรองด้วยคำค้นหา
             string searchQuery = string.IsNullOrEmpty(textBox1.Text) ? "%" : textBox1.Text;
-    
+            string query = $"SELECT * FROM Messages LIMIT {pageSize} OFFSET {(currentPage - 1) * pageSize}";
+            DataTable table = (DataTable)dataGridView1.DataSource;
 
-    // เปิดหน้ารายงานและส่งข้อมูลที่จำเป็น
-    var reportForm = new Report(sqlite_conn, "CRUD", totalPages, currentPage, pageSize, searchQuery);
-    reportForm.Show();
+            // เปิดหน้ารายงานและส่งข้อมูลที่จำเป็น
+            var reportForm = new Report(sqlite_conn, "CRUD", totalPages, currentPage, pageSize, searchQuery);
+            reportForm.Show();
         }
 
 
