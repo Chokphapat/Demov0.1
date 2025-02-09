@@ -41,9 +41,7 @@ namespace Demov0._1
             this.label4 = new System.Windows.Forms.Label();
             this.richTextBox5 = new System.Windows.Forms.RichTextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.richTextBox6 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
@@ -51,12 +49,12 @@ namespace Demov0._1
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.combobox2 = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
@@ -163,17 +161,6 @@ namespace Demov0._1
             this.label7.TabIndex = 17;
             this.label7.Text = "หมายเหตุ";
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(-2, 187);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(150, 37);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "ประวัติการยืม-คืน";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
-            // 
             // richTextBox6
             // 
             this.richTextBox6.Location = new System.Drawing.Point(5, 601);
@@ -183,16 +170,6 @@ namespace Demov0._1
             this.richTextBox6.TabIndex = 16;
             this.richTextBox6.Text = "";
             this.richTextBox6.TextChanged += new System.EventHandler(this.richTextBox6_TextChanged);
-            // 
-            // richTextBox2
-            // 
-            this.richTextBox2.Location = new System.Drawing.Point(5, 133);
-            this.richTextBox2.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(350, 37);
-            this.richTextBox2.TabIndex = 7;
-            this.richTextBox2.Text = "";
-            this.richTextBox2.TextChanged += new System.EventHandler(this.richTextBox2_TextChanged);
             // 
             // button4
             // 
@@ -267,22 +244,10 @@ namespace Demov0._1
             this.textBox2.TabIndex = 8;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
-            // combobox2
-            // 
-            this.combobox2.FormattingEnabled = true;
-            this.combobox2.Items.AddRange(new object[] {
-            "ยืม",
-            "คืน"});
-            this.combobox2.Location = new System.Drawing.Point(5, 227);
-            this.combobox2.Name = "combobox2";
-            this.combobox2.Size = new System.Drawing.Size(71, 44);
-            this.combobox2.TabIndex = 19;
-            this.combobox2.SelectedIndexChanged += new System.EventHandler(this.combobox2_SelectedIndexChanged);
-            // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(205, 187);
+            this.label8.Location = new System.Drawing.Point(-2, 191);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(71, 37);
             this.label8.TabIndex = 20;
@@ -290,7 +255,7 @@ namespace Demov0._1
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(212, 227);
+            this.richTextBox1.Location = new System.Drawing.Point(5, 231);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(84, 38);
             this.richTextBox1.TabIndex = 21;
@@ -318,11 +283,11 @@ namespace Demov0._1
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboBox2);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.textBox3);
             this.panel1.Controls.Add(this.richTextBox1);
             this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.combobox2);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.button1);
@@ -330,9 +295,7 @@ namespace Demov0._1
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.button4);
-            this.panel1.Controls.Add(this.richTextBox2);
             this.panel1.Controls.Add(this.richTextBox6);
-            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.richTextBox5);
             this.panel1.Controls.Add(this.label4);
@@ -344,6 +307,15 @@ namespace Demov0._1
             this.panel1.Size = new System.Drawing.Size(377, 779);
             this.panel1.TabIndex = 14;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(5, 144);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(351, 44);
+            this.comboBox2.TabIndex = 24;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged_1);
             // 
             // button2
             // 
@@ -488,7 +460,8 @@ namespace Demov0._1
                 try
                 {
                     // เคลียร์ค่าก่อนหน้าใน RichTextBox
-                    richTextBox2.Clear();
+                    comboBox2.Items.Clear();
+
 
                     // ดึงข้อมูลจากฐานข้อมูล
                     string selectQuery = "SELECT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
@@ -500,7 +473,7 @@ namespace Demov0._1
                         if (reader.Read())
                         {
                             // แสดงค่าชนิดอุปกรณ์ใน RichTextBox
-                            richTextBox2.Text = reader["ชนิดอุปกรณ์"].ToString();
+                            comboBox2.Text = reader["ชนิดอุปกรณ์"].ToString();
                         }
                         else
                         {
@@ -525,9 +498,7 @@ namespace Demov0._1
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.RichTextBox richTextBox5;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RichTextBox richTextBox6;
-        private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button3;
@@ -535,7 +506,6 @@ namespace Demov0._1
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.ComboBox combobox2;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TextBox textBox3;
@@ -550,6 +520,7 @@ namespace Demov0._1
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
+        private ComboBox comboBox2;
     }
 }
 

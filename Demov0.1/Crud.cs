@@ -77,10 +77,10 @@ namespace Demov0._1
         private void button1_Click(object sender, EventArgs e)
         {
             string text1 = comboBox1.SelectedItem?.ToString(); // ชื่ออุปกรณ์
-            string text2 = richTextBox2.Text; // ชนิดอุปกรณ์
+            string text2 = comboBox2.Text; // ชนิดอุปกรณ์
             string user = richTextBox5.Text; // ชื่อผู้ใช้งาน
             string note = richTextBox6.Text; // หมายเหตุ
-            string action = combobox2.SelectedItem?.ToString(); // เลือกยืม/คืน
+            string action = "ยืม"; // ตั้งค่าการกระทำเป็น "ยืม"
             string many = richTextBox1.Text;
             string hours = textBox2.Text;
             string minutes = textBox3.Text;
@@ -95,61 +95,29 @@ namespace Demov0._1
 
             try
             {
-                if (action == "ยืม")
-                {
-                    // ดำเนินการอัปเดตการยืม
-                    string updateBorrowQuery = @"UPDATE Equipment 
-                                         SET จำนวนการยืม = จำนวนการยืม + @amount, 
-                                             จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @amount
-                                         WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                    SQLiteCommand updateBorrowCmd = new SQLiteCommand(updateBorrowQuery, equipment_conn);
-                    updateBorrowCmd.Parameters.AddWithValue("@amount", amount);
-                    updateBorrowCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
-                    updateBorrowCmd.ExecuteNonQuery();
+                // ดำเนินการอัปเดตการยืม
+                string updateBorrowQuery = @"UPDATE Equipment 
+                                     SET จำนวนการยืม = จำนวนการยืม + @amount, 
+                                         จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @amount
+                                     WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
+                SQLiteCommand updateBorrowCmd = new SQLiteCommand(updateBorrowQuery, equipment_conn);
+                updateBorrowCmd.Parameters.AddWithValue("@amount", amount);
+                updateBorrowCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
+                updateBorrowCmd.ExecuteNonQuery();
 
-                    // บันทึกข้อมูลใน Messages
-                    string insertBorrowMessage = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ, จำนวน) 
-                                           VALUES (@Text1, @Text2, @History, @Date, @Time, @User, @Note, @many)";
-                    SQLiteCommand borrowMessageCmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
-                    borrowMessageCmd.Parameters.AddWithValue("@Text1", text1);
-                    borrowMessageCmd.Parameters.AddWithValue("@Text2", text2);
-                    //borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม จำนวน({amount})");
-                    borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม");
-                    borrowMessageCmd.Parameters.AddWithValue("@Date", Time);
-                    borrowMessageCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}");
-                    borrowMessageCmd.Parameters.AddWithValue("@User", user);
-                    borrowMessageCmd.Parameters.AddWithValue("@Note", note);
-                    borrowMessageCmd.Parameters.AddWithValue("@many", many);
-                    borrowMessageCmd.ExecuteNonQuery();
-                }
-                else if (action == "คืน")
-                {
-                    // ดำเนินการอัปเดตการคืน
-                    string updateReturnQuery = @"UPDATE Equipment 
-                                         SET จำนวนการคืน = จำนวนการคืน + @amount, 
-                                             จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน + @amount,
-                                             จำนวนการยืม = จำนวนการยืม - @amount
-                                         WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                    SQLiteCommand updateReturnCmd = new SQLiteCommand(updateReturnQuery, equipment_conn);
-                    updateReturnCmd.Parameters.AddWithValue("@amount", amount);
-                    updateReturnCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
-                    updateReturnCmd.ExecuteNonQuery();
-
-                    // บันทึกข้อมูลใน Messages
-                    string insertReturnMessage = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ, จำนวน) 
-                                           VALUES (@Text1, @Text2, @History, @Date, @Time, @User, @Note, @many)";
-                    SQLiteCommand returnMessageCmd = new SQLiteCommand(insertReturnMessage, sqlite_conn);
-                    returnMessageCmd.Parameters.AddWithValue("@Text1", text1);
-                    returnMessageCmd.Parameters.AddWithValue("@Text2", text2);
-                    //returnMessageCmd.Parameters.AddWithValue("@History", $"คืน จำนวน({amount})");
-                    returnMessageCmd.Parameters.AddWithValue("@History", $"คืน");
-                    returnMessageCmd.Parameters.AddWithValue("@Date", Time);
-                    returnMessageCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}");
-                    returnMessageCmd.Parameters.AddWithValue("@User", user);
-                    returnMessageCmd.Parameters.AddWithValue("@Note", note);
-                    returnMessageCmd.Parameters.AddWithValue("@many", many);
-                    returnMessageCmd.ExecuteNonQuery();
-                }
+                // บันทึกข้อมูลใน Messages
+                string insertBorrowMessage = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ, จำนวน) 
+                                       VALUES (@Text1, @Text2, @History, @Date, @Time, @User, @Note, @many)";
+                SQLiteCommand borrowMessageCmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
+                borrowMessageCmd.Parameters.AddWithValue("@Text1", text1);
+                borrowMessageCmd.Parameters.AddWithValue("@Text2", text2);
+                borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม"); // บันทึกว่าเป็นการยืม
+                borrowMessageCmd.Parameters.AddWithValue("@Date", Time);
+                borrowMessageCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}");
+                borrowMessageCmd.Parameters.AddWithValue("@User", user);
+                borrowMessageCmd.Parameters.AddWithValue("@Note", note);
+                borrowMessageCmd.Parameters.AddWithValue("@many", many);
+                borrowMessageCmd.ExecuteNonQuery();
 
                 // เคลียร์ฟอร์ม
                 ClearForm();
@@ -165,18 +133,19 @@ namespace Demov0._1
             }
         }
 
+
         private void ClearForm()
         {
             comboBox1.SelectedIndex = -1;
-            richTextBox2.Clear();
+            comboBox1.Items.Clear(); // ล้างข้อมูลใน ComboBox
             richTextBox1.Clear();
-            //richTextBox4.Clear();
             textBox2.Clear();
             textBox3.Clear();
             richTextBox5.Clear();
             richTextBox6.Clear();
-            combobox2.SelectedIndex = -1;
+            comboBox2.SelectedIndex = -1; // รีเซ็ต ComboBox อื่น (ถ้ามี)
         }
+
 
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -344,8 +313,8 @@ namespace Demov0._1
             WHERE Id = @Id";
                     SQLiteCommand updateCmd = new SQLiteCommand(updateQuery, sqlite_conn);
                     updateCmd.Parameters.AddWithValue("@Text1", comboBox1.Text);
-                    updateCmd.Parameters.AddWithValue("@Text2", richTextBox2.Text);
-                    updateCmd.Parameters.AddWithValue("@Text3", combobox2.Text);
+                    updateCmd.Parameters.AddWithValue("@Text2", comboBox2.Text);
+                    //updateCmd.Parameters.AddWithValue("@Text3", combobox2.Text);
                     updateCmd.Parameters.AddWithValue("@Text4", dateTimePicker1.Text);
                     updateCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}"); ;
                     updateCmd.Parameters.AddWithValue("@Text6", richTextBox5.Text);
@@ -377,8 +346,8 @@ namespace Demov0._1
                 DataGridViewRow row = dataGridView1.Rows[index];
 
                 comboBox1.SelectedItem = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
-                richTextBox2.Text = row.Cells[2].Value?.ToString();
-                combobox2.Text = row.Cells[3].Value?.ToString();
+                comboBox2.Text = row.Cells[2].Value?.ToString();
+                //combobox2.Text = row.Cells[3].Value?.ToString();
                 dateTimePicker1.Text = row.Cells[4].Value?.ToString();
                 //richTextBox4.Text = row.Cells[5].Value?.ToString();
                 richTextBox5.Text = row.Cells[6].Value?.ToString();
@@ -571,10 +540,7 @@ namespace Demov0._1
 
         }
 
-        private void richTextBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void label2_Click(object sender, EventArgs e)
         {
@@ -738,6 +704,10 @@ namespace Demov0._1
         {
             //เเสดงจำนวนที่หาเจอ
         }
-        
+
+        private void comboBox2_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
