@@ -705,9 +705,49 @@ namespace Demov0._1
             //เเสดงจำนวนที่หาเจอ
         }
 
-        private void comboBox2_SelectedIndexChanged_1(object sender, EventArgs e)
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            // ตรวจสอบว่ามีการเลือกข้อมูลใน ComboBox1 หรือไม่
+            if (comboBox1.SelectedItem != null)
+            {
+                string selectedDeviceName = comboBox1.SelectedItem.ToString(); // ชื่ออุปกรณ์ที่เลือก
+                LoadDeviceType(selectedDeviceName); // ดึงข้อมูลชนิดอุปกรณ์และเติมใน ComboBox2
+            }
         }
+
+        private void LoadDeviceType(string deviceName)
+        {
+            try
+            {
+                // ล้างข้อมูลใน ComboBox2 ก่อน
+                comboBox2.Items.Clear();
+
+                // สร้างคำสั่ง SQL เพื่อดึงชนิดของอุปกรณ์ที่สอดคล้องกับชื่ออุปกรณ์
+                string query = "SELECT DISTINCT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @DeviceName";
+                SQLiteCommand cmd = new SQLiteCommand(query, equipment_conn);
+                cmd.Parameters.AddWithValue("@DeviceName", deviceName);
+
+                // อ่านข้อมูลจากฐานข้อมูล
+                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string deviceType = reader["ชนิดอุปกรณ์"].ToString();
+                        comboBox2.Items.Add(deviceType); // เติมข้อมูลลงใน ComboBox2
+                    }
+                }
+
+                // ตั้งค่าให้เลือกตัวแรกโดยอัตโนมัติ (ถ้าจำเป็น)
+                if (comboBox2.Items.Count > 0)
+                {
+                    comboBox2.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"เกิดข้อผิดพลาดในการโหลดข้อมูล: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }

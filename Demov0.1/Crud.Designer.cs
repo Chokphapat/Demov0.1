@@ -451,42 +451,14 @@ namespace Demov0._1
 
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+
+        private void comboBox2_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedItem != null)
-            {
-                string selectedValue = comboBox1.SelectedItem.ToString();
-
-                try
-                {
-                    // เคลียร์ค่าก่อนหน้าใน RichTextBox
-                    comboBox2.Items.Clear();
-
-
-                    // ดึงข้อมูลจากฐานข้อมูล
-                    string selectQuery = "SELECT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                    SQLiteCommand cmd = new SQLiteCommand(selectQuery, equipment_conn);
-                    cmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", selectedValue);
-
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            // แสดงค่าชนิดอุปกรณ์ใน RichTextBox
-                            comboBox2.Text = reader["ชนิดอุปกรณ์"].ToString();
-                        }
-                        else
-                        {
-                            MessageBox.Show("ไม่พบข้อมูลชนิดอุปกรณ์สำหรับอุปกรณ์นี้", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("เกิดข้อผิดพลาด: " + ex.Message, "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+            // ใส่ลอจิกที่ต้องการทำเมื่อเลือกค่าใน ComboBox2
+            //MessageBox.Show("Selected index changed in comboBox2!");
         }
+
+
 
         #endregion
         private System.Windows.Forms.DataGridView dataGridView1;
