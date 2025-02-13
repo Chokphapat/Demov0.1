@@ -335,6 +335,7 @@
     <Compile Include="SqlServerUnitTest1.cs">
       <SubType>Designer</SubType>
     </Compile>
+    <Compile Include="sty.cs" />
     <EmbeddedResource Include="Crud.resx">
       <DependentUpon>Crud.cs</DependentUpon>
     </EmbeddedResource>

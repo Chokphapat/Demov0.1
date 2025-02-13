@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using System.Windows.Forms;
 
+
 namespace Demov0._1
 {
     partial class Crud
@@ -457,7 +458,7 @@ namespace Demov0._1
             // ใส่ลอจิกที่ต้องการทำเมื่อเลือกค่าใน ComboBox2
             //MessageBox.Show("Selected index changed in comboBox2!");
         }
-
+        
 
 
         #endregion

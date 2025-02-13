@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Demov0._1
@@ -17,6 +20,7 @@ namespace Demov0._1
         private SQLiteConnection sqlite_conn;
         private SQLiteConnection equipment_conn;
         int index;
+        
 
         public Crud()
         {
@@ -332,7 +336,7 @@ namespace Demov0._1
                     MessageBox.Show("กรุณาเลือกข้อมูลที่ต้องการแก้ไข", "ข้อผิดพลาด");
                 }
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 MessageBox.Show($"เลือกสิ่งที่จะเเก้ไขก่อนทำการกดปุ่ม", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -748,6 +752,8 @@ namespace Demov0._1
                 MessageBox.Show($"เกิดข้อผิดพลาดในการโหลดข้อมูล: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        
 
     }
+    
 }

@@ -43,7 +43,7 @@ namespace Demov0._1
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(417, 68);
+            this.panel1.Size = new System.Drawing.Size(835, 68);
             this.panel1.TabIndex = 0;
             // 
             // button1
@@ -64,7 +64,7 @@ namespace Demov0._1
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 74);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(417, 428);
+            this.panel2.Size = new System.Drawing.Size(835, 428);
             this.panel2.TabIndex = 1;
             this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
@@ -72,7 +72,7 @@ namespace Demov0._1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 502);
+            this.ClientSize = new System.Drawing.Size(835, 502);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";

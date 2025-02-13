@@ -63,6 +63,9 @@ namespace Demov0._1
 
                 dataGridView2.DataSource = dataTable;
                 dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridView2.Columns["จำนวนหาย"].Visible = false;
+                dataGridView2.Columns["จำนวนไม่พร้อมใช้งาน"].Visible = false;
+                dataGridView2.Columns["จำนวนการคืน"].Visible = false;
 
                 UpdatePaginationInfo();
             }

@@ -127,7 +127,7 @@ namespace Demov0._1
                 dataGridView.RowTemplate.Height = 30; // กำหนดความสูงของแถวให้เหมาะสม
 
             }
-            catch (SQLiteException sqlEx)
+            catch (SQLiteException )
             {
                 //MessageBox.Show($"เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: {sqlEx.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -236,6 +236,9 @@ namespace Demov0._1
             }
         }
 
+        private void label2_Click_1(object sender, EventArgs e)
+        {
 
+        }
     }
 }
