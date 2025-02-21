@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Demov0._1
@@ -81,13 +80,13 @@ namespace Demov0._1
         private void button1_Click(object sender, EventArgs e)
         {
             string text1 = comboBox1.SelectedItem?.ToString(); // ชื่ออุปกรณ์
-            string text2 = comboBox2.Text; // ชนิดอุปกรณ์
+            //string text2 = comboBox2.Text; // ชนิดอุปกรณ์
             string user = richTextBox5.Text; // ชื่อผู้ใช้งาน
             string note = richTextBox6.Text; // หมายเหตุ
             string action = "ยืม"; // ตั้งค่าการกระทำเป็น "ยืม"
             string many = richTextBox1.Text;
             string hours = textBox2.Text;
-            string minutes = textBox3.Text;
+            //string minutes = textBox3.Text;
             string Time = dateTimePicker1.Text;
             int amount = 0;
 
@@ -100,28 +99,19 @@ namespace Demov0._1
             try
             {
                 // ดำเนินการอัปเดตการยืม
-                string updateBorrowQuery = @"UPDATE Equipment 
-                                     SET จำนวนการยืม = จำนวนการยืม + @amount, 
-                                         จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @amount
-                                     WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                SQLiteCommand updateBorrowCmd = new SQLiteCommand(updateBorrowQuery, equipment_conn);
-                updateBorrowCmd.Parameters.AddWithValue("@amount", amount);
-                updateBorrowCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", text1);
-                updateBorrowCmd.ExecuteNonQuery();
+                string insertBorrowMessage = @"INSERT INTO Messages 
+(ชื่ออุปกรณ์, วัน_เดือน_ปี, ชื่อผู้ใช้, เบอร์โทร, ที่อยู่, หมายเหตุ) 
+VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
 
-                // บันทึกข้อมูลใน Messages
-                string insertBorrowMessage = @"INSERT INTO Messages (ชื่ออุปกรณ์, ชนิดอุปกรณ์, ประวัติการยืมคืน, วัน_เดือน_ปี, เวลา, ชื่อผู้ใช้, หมายเหตุ, จำนวน) 
-                                       VALUES (@Text1, @Text2, @History, @Date, @Time, @User, @Note, @many)";
                 SQLiteCommand borrowMessageCmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
                 borrowMessageCmd.Parameters.AddWithValue("@Text1", text1);
-                borrowMessageCmd.Parameters.AddWithValue("@Text2", text2);
-                borrowMessageCmd.Parameters.AddWithValue("@History", $"ยืม"); // บันทึกว่าเป็นการยืม
                 borrowMessageCmd.Parameters.AddWithValue("@Date", Time);
-                borrowMessageCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}");
                 borrowMessageCmd.Parameters.AddWithValue("@User", user);
+                borrowMessageCmd.Parameters.AddWithValue("@Phone", textBox2.Text); // เบอร์โทร
+                borrowMessageCmd.Parameters.AddWithValue("@Address", textBox3.Text); // ที่อยู่
                 borrowMessageCmd.Parameters.AddWithValue("@Note", note);
-                borrowMessageCmd.Parameters.AddWithValue("@many", many);
                 borrowMessageCmd.ExecuteNonQuery();
+
 
                 // เคลียร์ฟอร์ม
                 ClearForm();
@@ -144,10 +134,10 @@ namespace Demov0._1
             comboBox1.Items.Clear(); // ล้างข้อมูลใน ComboBox
             richTextBox1.Clear();
             textBox2.Clear();
-            textBox3.Clear();
+            //textBox3.Clear();
             richTextBox5.Clear();
             richTextBox6.Clear();
-            comboBox2.SelectedIndex = -1; // รีเซ็ต ComboBox อื่น (ถ้ามี)
+            //comboBox2.SelectedIndex = -1; // รีเซ็ต ComboBox อื่น (ถ้ามี)
         }
 
 
@@ -162,7 +152,9 @@ namespace Demov0._1
         {
             try
             {
-                string selectQuery = "SELECT * FROM Messages";
+                
+                string selectQuery = "SELECT Id, ชื่ออุปกรณ์, วัน_เดือน_ปี, ชื่อผู้ใช้, เบอร์โทร, ที่อยู่, หมายเหตุ FROM Messages";
+
                 SQLiteCommand selectCmd = new SQLiteCommand(selectQuery, sqlite_conn);
                 SQLiteDataAdapter adapter = new SQLiteDataAdapter(selectCmd);
                 DataTable dataTable = new DataTable();
@@ -171,10 +163,12 @@ namespace Demov0._1
                 dataGridView1.DataSource = dataTable;
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dataGridView1.Columns["id"].Width = 50;
-                dataGridView1.Columns["วัน_เดือน_ปี"].Width = 130;
-                dataGridView1.Columns["เวลา"].Width = 70;
-                dataGridView1.Columns["จำนวน"].Visible = false;
-                
+                dataGridView1.Columns["วัน_เดือน_ปี"].Width = 150;
+                //dataGridView1.Columns["ชนิดอุปกรณ์"].Visible = false;
+                //dataGridView1.Columns["เวลา"].Visible = false;
+                //dataGridView1.Columns["จำนวน"].Visible = false;
+                //dataGridView1.Columns["ประวัติการยืมคืน"].Visible = false;
+
             }
             catch (Exception ex)
             {
@@ -231,7 +225,7 @@ namespace Demov0._1
         private void button4_Click(object sender, EventArgs e)//ปุ่มเเก้ไข
         {
             string hours = textBox2.Text;
-            string minutes = textBox3.Text;
+            //string minutes = textBox3.Text;
 
             try
             {
@@ -317,10 +311,10 @@ namespace Demov0._1
             WHERE Id = @Id";
                     SQLiteCommand updateCmd = new SQLiteCommand(updateQuery, sqlite_conn);
                     updateCmd.Parameters.AddWithValue("@Text1", comboBox1.Text);
-                    updateCmd.Parameters.AddWithValue("@Text2", comboBox2.Text);
+                    //updateCmd.Parameters.AddWithValue("@Text2", comboBox2.Text);
                     //updateCmd.Parameters.AddWithValue("@Text3", combobox2.Text);
                     updateCmd.Parameters.AddWithValue("@Text4", dateTimePicker1.Text);
-                    updateCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}"); ;
+                    //updateCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}"); ;
                     updateCmd.Parameters.AddWithValue("@Text6", richTextBox5.Text);
                     updateCmd.Parameters.AddWithValue("@Text7", richTextBox6.Text);
                     updateCmd.Parameters.AddWithValue("@rich1", richTextBox1.Text);
@@ -350,7 +344,7 @@ namespace Demov0._1
                 DataGridViewRow row = dataGridView1.Rows[index];
 
                 comboBox1.SelectedItem = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
-                comboBox2.Text = row.Cells[2].Value?.ToString();
+                //comboBox2.Text = row.Cells[2].Value?.ToString();
                 //combobox2.Text = row.Cells[3].Value?.ToString();
                 dateTimePicker1.Text = row.Cells[4].Value?.ToString();
                 //richTextBox4.Text = row.Cells[5].Value?.ToString();
@@ -369,18 +363,18 @@ namespace Demov0._1
                     if (parts.Length == 2)
                     {
                         textBox2.Text = parts[0]; // รับส่วนแรก เช่น 12
-                        textBox3.Text = parts[1]; // รับส่วนหลัง เช่น 16
+                        //textBox3.Text = parts[1]; // รับส่วนหลัง เช่น 16
                     }
                     else
                     {
                         textBox2.Text = ""; // กรณีที่ไม่มีข้อมูลที่ต้องการ
-                        textBox3.Text = "";
+                        //textBox3.Text = "";
                     }
                 }
                 else
                 {
                     textBox2.Text = ""; // กรณีค่าเป็น null หรือว่าง
-                    textBox3.Text = "";
+                    //textBox3.Text = "";
                 }
             }
         }
@@ -617,26 +611,27 @@ namespace Demov0._1
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            if (textBox2.Text.Length > 2)
+            /*if (textBox2.Text.Length > 2)
             {
                 // ตัดข้อความให้เหลือเพียง 2 ตัวแรก
                 textBox2.Text = textBox2.Text.Substring(0, 2);
 
                 // ย้ายตำแหน่งเคอร์เซอร์ไปยังตำแหน่งท้ายสุด
                 textBox2.SelectionStart = textBox2.Text.Length;
-            }
+            }*/
+            //เก็บข้อมูลเบอร์โทร
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            if (textBox3.Text.Length > 2)
+            /*if (textBox3.Text.Length > 2)
             {
                 // ตัดข้อความให้เหลือเพียง 2 ตัวแรก
                 textBox3.Text = textBox3.Text.Substring(0, 2);
 
                 // ย้ายตำแหน่งเคอร์เซอร์ไปยังตำแหน่งท้ายสุด
                 textBox3.SelectionStart = textBox3.Text.Length;
-            }
+            }*/
         }
 
         private void label10_Click(object sender, EventArgs e)
@@ -651,14 +646,16 @@ namespace Demov0._1
 
         private void button2_Click_2(object sender, EventArgs e)
         {
-            // ตรวจสอบว่ากำลังเลือก "ทั้งหมด" หรือมีการกรองด้วยคำค้นหา
+            /* ตรวจสอบว่ากำลังเลือก "ทั้งหมด" หรือมีการกรองด้วยคำค้นหา
             string searchQuery = string.IsNullOrEmpty(textBox1.Text) ? "%" : textBox1.Text;
             string query = $"SELECT * FROM Messages LIMIT {pageSize} OFFSET {(currentPage - 1) * pageSize}";
             DataTable table = (DataTable)dataGridView1.DataSource;
 
             // เปิดหน้ารายงานและส่งข้อมูลที่จำเป็น
             var reportForm = new Report(sqlite_conn, "CRUD", totalPages, currentPage, pageSize, searchQuery);
-            reportForm.Show();
+            reportForm.Show();*/
+            Form1 form1 = new Form1();
+            form1.ShowDialog();
         }
 
 
@@ -724,7 +721,7 @@ namespace Demov0._1
             try
             {
                 // ล้างข้อมูลใน ComboBox2 ก่อน
-                comboBox2.Items.Clear();
+                //comboBox2.Items.Clear();
 
                 // สร้างคำสั่ง SQL เพื่อดึงชนิดของอุปกรณ์ที่สอดคล้องกับชื่ออุปกรณ์
                 string query = "SELECT DISTINCT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @DeviceName";
@@ -737,23 +734,36 @@ namespace Demov0._1
                     while (reader.Read())
                     {
                         string deviceType = reader["ชนิดอุปกรณ์"].ToString();
-                        comboBox2.Items.Add(deviceType); // เติมข้อมูลลงใน ComboBox2
+                        //comboBox2.Items.Add(deviceType); // เติมข้อมูลลงใน ComboBox2
                     }
                 }
 
                 // ตั้งค่าให้เลือกตัวแรกโดยอัตโนมัติ (ถ้าจำเป็น)
-                if (comboBox2.Items.Count > 0)
+                /*if (comboBox2.Items.Count > 0)
                 {
                     comboBox2.SelectedIndex = 0;
-                }
+                }*/
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"เกิดข้อผิดพลาดในการโหลดข้อมูล: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        
 
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged_1(object sender, EventArgs e)
+        {
+            //เก็บข้อมูลที่อยู่
+        }
     }
     
 }

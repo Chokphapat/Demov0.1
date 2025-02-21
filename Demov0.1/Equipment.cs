@@ -43,7 +43,7 @@ namespace Demov0._1
         private void LoadData()
         {
             try
-            {
+            {   
                 string searchValue = textBox1.Text.Trim();
                 string query = $@"
                         SELECT * FROM Equipment
@@ -61,12 +61,16 @@ namespace Demov0._1
                 DataTable dataTable = new DataTable();
                 adapter.Fill(dataTable);
 
+                
+                dataGridView2.AutoGenerateColumns = true;
                 dataGridView2.DataSource = dataTable;
                 dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridView2.Columns["Id"].Visible = false;
                 dataGridView2.Columns["จำนวนหาย"].Visible = false;
                 dataGridView2.Columns["จำนวนไม่พร้อมใช้งาน"].Visible = false;
                 dataGridView2.Columns["จำนวนการคืน"].Visible = false;
 
+                
                 UpdatePaginationInfo();
             }
             catch (Exception ex)
@@ -148,10 +152,10 @@ namespace Demov0._1
                 ชนิด.Text = row.Cells["ชนิดอุปกรณ์"].Value.ToString();
                 จำนวน.Text = row.Cells["จำนวนทั้งหมด"].Value.ToString();
                 ยืม.Text = row.Cells["จำนวนการยืม"].Value.ToString();
-                คืน.Text = row.Cells["จำนวนการคืน"].Value.ToString();
+                //คืน.Text = row.Cells["จำนวนการคืน"].Value.ToString();
                 พร้อม.Text = row.Cells["จำนวนพร้อมใช้งาน"].Value.ToString();
-                ไม่พร้อม.Text = row.Cells["จำนวนไม่พร้อมใช้งาน"].Value.ToString();
-                หาย.Text = row.Cells["จำนวนหาย"].Value.ToString();
+                //ไม่พร้อม.Text = row.Cells["จำนวนไม่พร้อมใช้งาน"].Value.ToString();
+                //หาย.Text = row.Cells["จำนวนหาย"].Value.ToString();
             }
         }
 
@@ -169,10 +173,10 @@ namespace Demov0._1
                 insertCmd.Parameters.AddWithValue("@ชนิดอุปกรณ์", ชนิด.Text);
                 insertCmd.Parameters.AddWithValue("@จำนวนทั้งหมด", จำนวน.Text);
                 insertCmd.Parameters.AddWithValue("@จำนวนการยืม", ยืม.Text);
-                insertCmd.Parameters.AddWithValue("@จำนวนการคืน", คืน.Text);
+                //insertCmd.Parameters.AddWithValue("@จำนวนการคืน", คืน.Text);
                 insertCmd.Parameters.AddWithValue("@จำนวนพร้อมใช้งาน", พร้อม.Text);
-                insertCmd.Parameters.AddWithValue("@จำนวนไม่พร้อมใช้งาน", ไม่พร้อม.Text);
-                insertCmd.Parameters.AddWithValue("@จำนวนหาย", หาย.Text);
+                //insertCmd.Parameters.AddWithValue("@จำนวนไม่พร้อมใช้งาน", ไม่พร้อม.Text);
+                //insertCmd.Parameters.AddWithValue("@จำนวนหาย", หาย.Text);
                 
                 insertCmd.ExecuteNonQuery();
                 MessageBox.Show("เพิ่มข้อมูลสำเร็จ!");
@@ -288,10 +292,10 @@ namespace Demov0._1
                     updateCmd.Parameters.AddWithValue("@ชนิดอุปกรณ์", ชนิด.Text);
                     updateCmd.Parameters.AddWithValue("@จำนวนทั้งหมด", จำนวน.Text);
                     updateCmd.Parameters.AddWithValue("@จำนวนการยืม", ยืม.Text);
-                    updateCmd.Parameters.AddWithValue("@จำนวนการคืน", คืน.Text);
+                    //updateCmd.Parameters.AddWithValue("@จำนวนการคืน", คืน.Text);
                     updateCmd.Parameters.AddWithValue("@จำนวนพร้อมใช้งาน", พร้อม.Text);
-                    updateCmd.Parameters.AddWithValue("@จำนวนไม่พร้อมใช้งาน", ไม่พร้อม.Text);
-                    updateCmd.Parameters.AddWithValue("@จำนวนหาย", หาย.Text);
+                    //updateCmd.Parameters.AddWithValue("@จำนวนไม่พร้อมใช้งาน", ไม่พร้อม.Text);
+                    //updateCmd.Parameters.AddWithValue("@จำนวนหาย", หาย.Text);
                     updateCmd.Parameters.AddWithValue("@Id", id);
 
                     updateCmd.ExecuteNonQuery();
