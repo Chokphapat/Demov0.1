@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Diagnostics;
 
 namespace Demov0._1
 {
@@ -29,6 +30,7 @@ namespace Demov0._1
             
             sqlite_conn.Open();
             
+
 
             /*string createTableQuery = "CREATE TABLE IF NOT EXISTS Messages (Id INTEGER PRIMARY KEY, ชื่ออุปกรณ์ TEXT, ชนิดอุปกรณ์ TEXT, ประวัติการยืมคืน TEXT, วัน เดือน ปี TEXT, เวลา TEXT, ชื่อผู้ใช้ TEXT, หมายเหตุ TEXT)";
             SQLiteCommand createTableCmd = new SQLiteCommand(createTableQuery, sqlite_conn);
@@ -323,7 +325,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                     string updateQuery = @"
             UPDATE Borrow 
             SET ชื่ออุปกรณ์ = @Text1, 
-                ชนิดอุปกรณ์ = @Text2, 
+                 
                 ประวัติการยืมคืน = @Text3, 
                 วันที่ = @Text4, 
                 เวลา = @Time, 
@@ -436,7 +438,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
             string searchValue = textBox1.Text;
             try
             {
-                string searchQuery = "SELECT * FROM Borrow WHERE ชื่ออุปกรณ์ LIKE @SearchValue OR ชนิดอุปกรณ์ LIKE @SearchValue OR ประวัติการยืมคืน LIKE @SearchValue OR วันที่ LIKE @SearchValue OR ชื่อผู้ยืม LIKE @SearchValue ";
+                string searchQuery = "SELECT * FROM Borrow WHERE ชื่ออุปกรณ์ LIKE @SearchValue OR ประวัติการยืมคืน LIKE @SearchValue OR วันที่ LIKE @SearchValue OR ชื่อผู้ยืม LIKE @SearchValue ";
                 using (SQLiteCommand searchCmd = new SQLiteCommand(searchQuery, sqlite_conn))
                 {
                     searchCmd.Parameters.AddWithValue("@SearchValue", "%" + searchValue + "%");
@@ -478,7 +480,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                 string query = $@"
             SELECT * FROM Borrow
             WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
-            OR ชนิดอุปกรณ์ LIKE '%{searchValue}%'
+           
             OR ประวัติการยืมคืน LIKE '%{searchValue}%'
             OR วันที่ LIKE '%{searchValue}%'
             OR ชื่อผู้ยืม LIKE '%{searchValue}%'
@@ -515,7 +517,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
             string countQuery = $@"
         SELECT COUNT(*) FROM Borrow
         WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
-        OR ชนิดอุปกรณ์ LIKE '%{searchValue}%'
+         
         OR ประวัติการยืมคืน LIKE '%{searchValue}%'
         OR วันที่ LIKE '%{searchValue}%'
         OR ชื่อผู้ยืม LIKE '%{searchValue}%'";
@@ -730,44 +732,88 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
             if (comboBox1.SelectedItem != null)
             {
                 string selectedDeviceName = comboBox1.SelectedItem.ToString(); // ชื่ออุปกรณ์ที่เลือก
-                LoadDeviceType(selectedDeviceName); // ดึงข้อมูลชนิดอุปกรณ์และเติมใน ComboBox2
+                /*LoadDeviceType(selectedDeviceName); // ดึงข้อมูลชนิดอุปกรณ์และเติมใน ComboBox2*/
             }
         }
 
-        private void LoadDeviceType(string deviceName)
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedItem != null)
+            {
+                string selectedName = comboBox2.SelectedItem.ToString();
+                LoadUserDetails(selectedName); // เรียกเมธอดดึงข้อมูลผู้ใช้
+            }
+        }
+
+        private void LoadUserDetails(string userName)
         {
             try
             {
-                // ล้างข้อมูลใน ComboBox2 ก่อน
-                //comboBox2.Items.Clear();
+                // แสดงชื่อที่กำลังค้นหา (สำหรับ debug)
+                Debug.WriteLine($"กำลังค้นหาชื่อผู้ใช้: '{userName}'");
 
-                // สร้างคำสั่ง SQL เพื่อดึงชนิดของอุปกรณ์ที่สอดคล้องกับชื่ออุปกรณ์
-                string query = "SELECT DISTINCT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @DeviceName";
-                SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
-                cmd.Parameters.AddWithValue("@DeviceName", deviceName);
+                string query = "SELECT เบอร์โทร, ที่อยู่ FROM User WHERE ชื่อ = @UserName";
 
-                // อ่านข้อมูลจากฐานข้อมูล
-                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                using (SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn))
                 {
-                    while (reader.Read())
+                    cmd.Parameters.AddWithValue("@UserName", userName);
+
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        string deviceType = reader["ชนิดอุปกรณ์"].ToString();
-                        //comboBox2.Items.Add(deviceType); // เติมข้อมูลลงใน ComboBox2
+                        if (reader.HasRows) // ตรวจสอบว่ามีข้อมูลหรือไม่
+                        {
+                            while (reader.Read())
+                            {
+                                // Debug ข้อมูลที่ได้
+                                Debug.WriteLine($"พบข้อมูล: เบอร์โทร={reader["เบอร์โทร"]}, ที่อยู่={reader["ที่อยู่"]}");
+
+                                // เติมข้อมูลใน TextBox
+                                textBox2.Text = reader["เบอร์โทร"]?.ToString() ?? "";
+                                textBox3.Text = reader["ที่อยู่"]?.ToString() ?? "";
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("ไม่พบข้อมูลผู้ใช้");
+                            textBox2.Text = "";
+                            textBox3.Text = "";
+                        }
                     }
                 }
-
-                // ตั้งค่าให้เลือกตัวแรกโดยอัตโนมัติ (ถ้าจำเป็น)
-                /*if (comboBox2.Items.Count > 0)
-                {
-                    comboBox2.SelectedIndex = 0;
-                }*/
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"เกิดข้อผิดพลาดในการโหลดข้อมูล: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine($"เกิดข้อผิดพลาด: {ex.Message}");
+                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void CheckUserData()
+        {
+            try
+            {
+                string query = "SELECT ชื่อ, เบอร์โทร, ที่อยู่ FROM User";
+                SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
+                DataTable dt = new DataTable();
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+                adapter.Fill(dt);
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("ข้อมูลในตาราง User:");
+                foreach (DataRow row in dt.Rows)
+                {
+                    sb.AppendLine($"{row["ชื่อ"]} | {row["เบอร์โทร"]} | {row["ที่อยู่"]}");
+                }
+
+                MessageBox.Show(sb.ToString(), "ข้อมูลผู้ใช้ทั้งหมด");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"ไม่สามารถตรวจสอบข้อมูล: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        // ใน constructor
+        
         private void label8_Click(object sender, EventArgs e)
         {
 
