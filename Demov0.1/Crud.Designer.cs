@@ -40,7 +40,6 @@ namespace Demov0._1
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.label6 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.richTextBox5 = new System.Windows.Forms.RichTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.richTextBox6 = new System.Windows.Forms.RichTextBox();
             this.button4 = new System.Windows.Forms.Button();
@@ -63,6 +62,7 @@ namespace Demov0._1
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -140,16 +140,6 @@ namespace Demov0._1
             this.label4.TabIndex = 10;
             this.label4.Text = "วัน/เดือน/ปี";
             this.label4.Click += new System.EventHandler(this.label4_Click);
-            // 
-            // richTextBox5
-            // 
-            this.richTextBox5.Location = new System.Drawing.Point(8, 306);
-            this.richTextBox5.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.richTextBox5.Name = "richTextBox5";
-            this.richTextBox5.Size = new System.Drawing.Size(350, 37);
-            this.richTextBox5.TabIndex = 15;
-            this.richTextBox5.Text = "";
-            this.richTextBox5.TextChanged += new System.EventHandler(this.richTextBox5_TextChanged);
             // 
             // label7
             // 
@@ -245,6 +235,7 @@ namespace Demov0._1
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboBox2);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.textBox3);
             this.panel1.Controls.Add(this.richTextBox1);
@@ -257,7 +248,6 @@ namespace Demov0._1
             this.panel1.Controls.Add(this.button4);
             this.panel1.Controls.Add(this.richTextBox6);
             this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.richTextBox5);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label5);
@@ -288,10 +278,10 @@ namespace Demov0._1
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(7, 389);
+            this.textBox2.Location = new System.Drawing.Point(9, 389);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(351, 43);
+            this.textBox2.Size = new System.Drawing.Size(347, 43);
             this.textBox2.TabIndex = 8;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
@@ -393,6 +383,15 @@ namespace Demov0._1
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(9, 302);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(350, 44);
+            this.comboBox2.TabIndex = 24;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged_2);
+            // 
             // Crud
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 36F);
@@ -446,7 +445,6 @@ namespace Demov0._1
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.RichTextBox richTextBox5;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.RichTextBox richTextBox6;
         private System.Windows.Forms.Button button4;
@@ -469,6 +467,7 @@ namespace Demov0._1
         private TextBox textBox2;
         private Label label2;
         private TextBox textBox3;
+        private ComboBox comboBox2;
     }
 }
 

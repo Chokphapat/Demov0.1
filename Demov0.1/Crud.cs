@@ -17,21 +17,22 @@ namespace Demov0._1
     public partial class Crud : Form
     {
         private SQLiteConnection sqlite_conn;
-        private SQLiteConnection equipment_conn;
+        
         int index;
         
 
         public Crud()
         {
+            //ฐานข้อมูล
             InitializeComponent();
-            sqlite_conn = new SQLiteConnection("Data Source=your_database_v4.db;Version=3;");
-            equipment_conn = new SQLiteConnection("Data Source=DatabaseAll.db;Version=3;");
+            sqlite_conn = new SQLiteConnection("Data Source=DB.db;Version=3;");
+            
             sqlite_conn.Open();
-            equipment_conn.Open();
+            
 
-            string createTableQuery = "CREATE TABLE IF NOT EXISTS Messages (Id INTEGER PRIMARY KEY, ชื่ออุปกรณ์ TEXT, ชนิดอุปกรณ์ TEXT, ประวัติการยืมคืน TEXT, วัน เดือน ปี TEXT, เวลา TEXT, ชื่อผู้ใช้ TEXT, หมายเหตุ TEXT)";
+            /*string createTableQuery = "CREATE TABLE IF NOT EXISTS Messages (Id INTEGER PRIMARY KEY, ชื่ออุปกรณ์ TEXT, ชนิดอุปกรณ์ TEXT, ประวัติการยืมคืน TEXT, วัน เดือน ปี TEXT, เวลา TEXT, ชื่อผู้ใช้ TEXT, หมายเหตุ TEXT)";
             SQLiteCommand createTableCmd = new SQLiteCommand(createTableQuery, sqlite_conn);
-            createTableCmd.ExecuteNonQuery();
+            createTableCmd.ExecuteNonQuery();*/
 
             LoadComboBoxData();
 
@@ -50,20 +51,41 @@ namespace Demov0._1
         }
         private void LoadComboBoxData()
         {
-            comboBox1.Items.Clear(); // เพิ่มการเคลียร์ข้อมูลก่อนโหลดใหม่
-            HashSet<string> uniqueItems = new HashSet<string>();
+            comboBox1.Items.Clear();
+            comboBox2.Items.Clear();
 
-            string selectQuery = "SELECT DISTINCT ชื่ออุปกรณ์ FROM Equipment";
-            SQLiteCommand cmd = new SQLiteCommand(selectQuery, equipment_conn);
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            // โหลดข้อมูลอุปกรณ์
+            string equipmentQuery = "SELECT DISTINCT ชื่ออุปกรณ์ FROM Equipment";
+            SQLiteCommand equipmentCmd = new SQLiteCommand(equipmentQuery, sqlite_conn);
+            HashSet<string> uniqueEquipment = new HashSet<string>();
+
+            using (SQLiteDataReader reader = equipmentCmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
                     string item = reader["ชื่ออุปกรณ์"].ToString();
-                    if (!uniqueItems.Contains(item))
+                    if (!uniqueEquipment.Contains(item))
                     {
-                        uniqueItems.Add(item);
+                        uniqueEquipment.Add(item);
                         comboBox1.Items.Add(item);
+                    }
+                }
+            }
+
+            // โหลดข้อมูลผู้ใช้
+            string userQuery = "SELECT DISTINCT ชื่อ FROM User";
+            SQLiteCommand userCmd = new SQLiteCommand(userQuery, sqlite_conn);
+            HashSet<string> uniqueUsers = new HashSet<string>();
+
+            using (SQLiteDataReader reader = userCmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    string item = reader["ชื่อ"].ToString();
+                    if (!uniqueUsers.Contains(item))
+                    {
+                        uniqueUsers.Add(item);
+                        comboBox2.Items.Add(item);
                     }
                 }
             }
@@ -81,7 +103,7 @@ namespace Demov0._1
         {
             string text1 = comboBox1.SelectedItem?.ToString(); // ชื่ออุปกรณ์
             //string text2 = comboBox2.Text; // ชนิดอุปกรณ์
-            string user = richTextBox5.Text; // ชื่อผู้ใช้งาน
+            string user = comboBox2.SelectedItem?.ToString(); // ชื่อผู้ใช้งาน
             string note = richTextBox6.Text; // หมายเหตุ
             string action = "ยืม"; // ตั้งค่าการกระทำเป็น "ยืม"
             string many = richTextBox1.Text;
@@ -99,8 +121,8 @@ namespace Demov0._1
             try
             {
                 // ดำเนินการอัปเดตการยืม
-                string insertBorrowMessage = @"INSERT INTO Messages 
-(ชื่ออุปกรณ์, วัน_เดือน_ปี, ชื่อผู้ใช้, เบอร์โทร, ที่อยู่, หมายเหตุ) 
+                string insertBorrowMessage = @"INSERT INTO Borrow 
+(ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ) 
 VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
 
                 SQLiteCommand borrowMessageCmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
@@ -135,7 +157,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
             richTextBox1.Clear();
             textBox2.Clear();
             //textBox3.Clear();
-            richTextBox5.Clear();
+            comboBox2.SelectedIndex = -1;
             richTextBox6.Clear();
             //comboBox2.SelectedIndex = -1; // รีเซ็ต ComboBox อื่น (ถ้ามี)
         }
@@ -152,8 +174,8 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
         {
             try
             {
-                
-                string selectQuery = "SELECT Id, ชื่ออุปกรณ์, วัน_เดือน_ปี, ชื่อผู้ใช้, เบอร์โทร, ที่อยู่, หมายเหตุ FROM Messages";
+
+                string selectQuery = "SELECT ลำดับ, ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ FROM Borrow";
 
                 SQLiteCommand selectCmd = new SQLiteCommand(selectQuery, sqlite_conn);
                 SQLiteDataAdapter adapter = new SQLiteDataAdapter(selectCmd);
@@ -162,8 +184,8 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
 
                 dataGridView1.DataSource = dataTable;
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dataGridView1.Columns["id"].Width = 50;
-                dataGridView1.Columns["วัน_เดือน_ปี"].Width = 150;
+                dataGridView1.Columns["ลำดับ"].Width = 50; 
+                dataGridView1.Columns["วันที่"].Width = 150;
                 //dataGridView1.Columns["ชนิดอุปกรณ์"].Visible = false;
                 //dataGridView1.Columns["เวลา"].Visible = false;
                 //dataGridView1.Columns["จำนวน"].Visible = false;
@@ -197,9 +219,9 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                         {
                             if (!selectedRow.IsNewRow) // ข้ามแถวที่เป็นแถวเปล่า
                             {
-                                int id = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+                                int id = Convert.ToInt32(selectedRow.Cells["ลำดับ"].Value);
 
-                                string deleteQuery = "DELETE FROM Messages WHERE Id = @Id";
+                                string deleteQuery = "DELETE FROM Borrow WHERE ลำดับ = @Id";
                                 SQLiteCommand deleteCmd = new SQLiteCommand(deleteQuery, sqlite_conn);
                                 deleteCmd.Parameters.AddWithValue("@Id", id);
                                 deleteCmd.ExecuteNonQuery();
@@ -232,7 +254,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                 if (index >= 0)
                 {
                     DataGridViewRow row = dataGridView1.Rows[index];
-                    int id = Convert.ToInt32(row.Cells["Id"].Value);
+                    int id = Convert.ToInt32(row.Cells["ลำดับ"].Value);
 
                     // ดึงค่าก่อนหน้า (จาก DataGridView)
                     int b = Convert.ToInt32(row.Cells["จำนวน"].Value); // จำนวนก่อนหน้า
@@ -291,7 +313,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
 
                     if (!string.IsNullOrEmpty(updateEquipmentQuery))
                     {
-                        SQLiteCommand updateEquipmentCmd = new SQLiteCommand(updateEquipmentQuery, equipment_conn);
+                        SQLiteCommand updateEquipmentCmd = new SQLiteCommand(updateEquipmentQuery, sqlite_conn);
                         updateEquipmentCmd.Parameters.AddWithValue("@c", Math.Abs(c)); // ใช้ค่าความต่าง (บวก)
                         updateEquipmentCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", comboBox1.Text);
                         updateEquipmentCmd.ExecuteNonQuery();
@@ -299,13 +321,13 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
 
                     // อัปเดตข้อมูลใน Messages
                     string updateQuery = @"
-            UPDATE Messages 
+            UPDATE Borrow 
             SET ชื่ออุปกรณ์ = @Text1, 
                 ชนิดอุปกรณ์ = @Text2, 
                 ประวัติการยืมคืน = @Text3, 
-                วัน_เดือน_ปี = @Text4, 
+                วันที่ = @Text4, 
                 เวลา = @Time, 
-                ชื่อผู้ใช้ = @Text6, 
+                ชื่อผู้ยืม = @Text6, 
                 หมายเหตุ = @Text7,
                 จำนวน = @rich1
             WHERE Id = @Id";
@@ -315,7 +337,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                     //updateCmd.Parameters.AddWithValue("@Text3", combobox2.Text);
                     updateCmd.Parameters.AddWithValue("@Text4", dateTimePicker1.Text);
                     //updateCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}"); ;
-                    updateCmd.Parameters.AddWithValue("@Text6", richTextBox5.Text);
+                    updateCmd.Parameters.AddWithValue("@Text6", comboBox2.Text);
                     updateCmd.Parameters.AddWithValue("@Text7", richTextBox6.Text);
                     updateCmd.Parameters.AddWithValue("@rich1", richTextBox1.Text);
                     updateCmd.Parameters.AddWithValue("@Id", id);
@@ -346,9 +368,9 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                 comboBox1.SelectedItem = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
                 //comboBox2.Text = row.Cells[2].Value?.ToString();
                 //combobox2.Text = row.Cells[3].Value?.ToString();
-                dateTimePicker1.Text = row.Cells[4].Value?.ToString();
+                //dateTimePicker1.Text = row.Cells[4].Value?.ToString();
                 //richTextBox4.Text = row.Cells[5].Value?.ToString();
-                richTextBox5.Text = row.Cells[6].Value?.ToString();
+                comboBox2.Text = row.Cells[6].Value?.ToString();
                 richTextBox6.Text = row.Cells[7].Value?.ToString();
                 richTextBox1.Text= row.Cells[8].Value?.ToString();
 
@@ -414,7 +436,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
             string searchValue = textBox1.Text;
             try
             {
-                string searchQuery = "SELECT * FROM Messages WHERE ชื่ออุปกรณ์ LIKE @SearchValue OR ชนิดอุปกรณ์ LIKE @SearchValue OR ประวัติการยืมคืน LIKE @SearchValue OR วัน_เดือน_ปี LIKE @SearchValue OR ชื่อผู้ใช้ LIKE @SearchValue ";
+                string searchQuery = "SELECT * FROM Borrow WHERE ชื่ออุปกรณ์ LIKE @SearchValue OR ชนิดอุปกรณ์ LIKE @SearchValue OR ประวัติการยืมคืน LIKE @SearchValue OR วันที่ LIKE @SearchValue OR ชื่อผู้ยืม LIKE @SearchValue ";
                 using (SQLiteCommand searchCmd = new SQLiteCommand(searchQuery, sqlite_conn))
                 {
                     searchCmd.Parameters.AddWithValue("@SearchValue", "%" + searchValue + "%");
@@ -440,11 +462,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                 sqlite_conn.Dispose();
             }
 
-            if (equipment_conn != null)
-            {
-                equipment_conn.Close();
-                equipment_conn.Dispose();
-            }
+            
             base.OnFormClosed(e);
         }
         private int currentPage = 1; // หน้าปัจจุบัน
@@ -458,12 +476,12 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
             {
                 string searchValue = textBox1.Text.Trim();
                 string query = $@"
-            SELECT * FROM Messages
+            SELECT * FROM Borrow
             WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
             OR ชนิดอุปกรณ์ LIKE '%{searchValue}%'
             OR ประวัติการยืมคืน LIKE '%{searchValue}%'
-            OR วัน_เดือน_ปี LIKE '%{searchValue}%'
-            OR ชื่อผู้ใช้ LIKE '%{searchValue}%'
+            OR วันที่ LIKE '%{searchValue}%'
+            OR ชื่อผู้ยืม LIKE '%{searchValue}%'
             LIMIT @PageSize OFFSET @Offset";
 
                 SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
@@ -495,12 +513,12 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
         private void UpdatePaginationInfo(string searchValue)
         {
             string countQuery = $@"
-        SELECT COUNT(*) FROM Messages
+        SELECT COUNT(*) FROM Borrow
         WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
         OR ชนิดอุปกรณ์ LIKE '%{searchValue}%'
         OR ประวัติการยืมคืน LIKE '%{searchValue}%'
-        OR วัน_เดือน_ปี LIKE '%{searchValue}%'
-        OR ชื่อผู้ใช้ LIKE '%{searchValue}%'";
+        OR วันที่ LIKE '%{searchValue}%'
+        OR ชื่อผู้ยืม LIKE '%{searchValue}%'";
 
             SQLiteCommand countCmd = new SQLiteCommand(countQuery, sqlite_conn);
             totalRecords = Convert.ToInt32(countCmd.ExecuteScalar());
@@ -725,7 +743,7 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
 
                 // สร้างคำสั่ง SQL เพื่อดึงชนิดของอุปกรณ์ที่สอดคล้องกับชื่ออุปกรณ์
                 string query = "SELECT DISTINCT ชนิดอุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @DeviceName";
-                SQLiteCommand cmd = new SQLiteCommand(query, equipment_conn);
+                SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
                 cmd.Parameters.AddWithValue("@DeviceName", deviceName);
 
                 // อ่านข้อมูลจากฐานข้อมูล
@@ -763,6 +781,11 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
         private void textBox3_TextChanged_1(object sender, EventArgs e)
         {
             //เก็บข้อมูลที่อยู่
+        }
+
+        private void comboBox2_SelectedIndexChanged_2(object sender, EventArgs e)
+        {
+
         }
     }
     
