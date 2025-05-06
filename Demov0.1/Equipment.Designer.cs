@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.sqLiteCommand1 = new System.Data.SQLite.SQLiteCommand();
@@ -50,7 +50,7 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.label10 = new System.Windows.Forms.Label();
             this.รหัส = new System.Windows.Forms.RichTextBox();
-            this.พร้อม = new System.Windows.Forms.RichTextBox();
+            this.หาย = new System.Windows.Forms.RichTextBox();
             this.ยืม = new System.Windows.Forms.RichTextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -58,7 +58,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.จำนวน = new System.Windows.Forms.RichTextBox();
-            this.ชนิด = new System.Windows.Forms.RichTextBox();
+            this.คงเหลือ = new System.Windows.Forms.RichTextBox();
             this.ชื่อ = new System.Windows.Forms.RichTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -106,34 +106,34 @@
             this.dataGridView2.AllowUserToAddRows = false;
             this.dataGridView2.AllowUserToDeleteRows = false;
             this.dataGridView2.BackgroundColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView2.Location = new System.Drawing.Point(3, 77);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView2.RowHeadersWidth = 51;
             this.dataGridView2.RowTemplate.Height = 24;
             this.dataGridView2.Size = new System.Drawing.Size(1537, 724);
@@ -159,6 +159,7 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1551, 939);
             this.panel2.TabIndex = 3;
+            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
             // comboBox3
             // 
@@ -268,7 +269,7 @@
             // 
             this.panel3.Controls.Add(this.label10);
             this.panel3.Controls.Add(this.รหัส);
-            this.panel3.Controls.Add(this.พร้อม);
+            this.panel3.Controls.Add(this.หาย);
             this.panel3.Controls.Add(this.ยืม);
             this.panel3.Controls.Add(this.label8);
             this.panel3.Controls.Add(this.label4);
@@ -276,7 +277,7 @@
             this.panel3.Controls.Add(this.button2);
             this.panel3.Controls.Add(this.button1);
             this.panel3.Controls.Add(this.จำนวน);
-            this.panel3.Controls.Add(this.ชนิด);
+            this.panel3.Controls.Add(this.คงเหลือ);
             this.panel3.Controls.Add(this.ชื่อ);
             this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.label2);
@@ -293,33 +294,33 @@
             this.label10.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.label10.Location = new System.Drawing.Point(39, -3);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(108, 37);
+            this.label10.Size = new System.Drawing.Size(75, 46);
             this.label10.TabIndex = 24;
-            this.label10.Text = "รหัสอุปกรณ์";
+            this.label10.Text = "ลำดับ";
             // 
             // รหัส
             // 
             this.รหัส.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
             this.รหัส.Location = new System.Drawing.Point(46, 37);
             this.รหัส.Name = "รหัส";
-            this.รหัส.Size = new System.Drawing.Size(326, 46);
+            this.รหัส.Size = new System.Drawing.Size(58, 46);
             this.รหัส.TabIndex = 23;
             this.รหัส.Text = "";
             this.รหัส.TextChanged += new System.EventHandler(this.richTextBox10_TextChanged);
             // 
-            // พร้อม
+            // หาย
             // 
-            this.พร้อม.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.พร้อม.Location = new System.Drawing.Point(46, 552);
-            this.พร้อม.Name = "พร้อม";
-            this.พร้อม.Size = new System.Drawing.Size(139, 49);
-            this.พร้อม.TabIndex = 19;
-            this.พร้อม.Text = "";
+            this.หาย.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.หาย.Location = new System.Drawing.Point(46, 574);
+            this.หาย.Name = "หาย";
+            this.หาย.Size = new System.Drawing.Size(139, 49);
+            this.หาย.TabIndex = 19;
+            this.หาย.Text = "";
             // 
             // ยืม
             // 
             this.ยืม.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.ยืม.Location = new System.Drawing.Point(46, 450);
+            this.ยืม.Location = new System.Drawing.Point(48, 374);
             this.ยืม.Name = "ยืม";
             this.ยืม.Size = new System.Drawing.Size(118, 49);
             this.ยืม.TabIndex = 17;
@@ -329,18 +330,18 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label8.Location = new System.Drawing.Point(39, 512);
+            this.label8.Location = new System.Drawing.Point(39, 534);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(164, 37);
+            this.label8.Size = new System.Drawing.Size(129, 46);
             this.label8.TabIndex = 16;
-            this.label8.Text = "จำนวนพร้อมใช้งาน";
+            this.label8.Text = "จำนวนหาย";
             this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label4.Location = new System.Drawing.Point(39, 410);
+            this.label4.Location = new System.Drawing.Point(39, 318);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(124, 37);
             this.label4.TabIndex = 9;
@@ -383,21 +384,21 @@
             // จำนวน
             // 
             this.จำนวน.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.จำนวน.Location = new System.Drawing.Point(46, 340);
+            this.จำนวน.Location = new System.Drawing.Point(48, 252);
             this.จำนวน.Name = "จำนวน";
             this.จำนวน.Size = new System.Drawing.Size(118, 49);
             this.จำนวน.TabIndex = 5;
             this.จำนวน.Text = "";
             // 
-            // ชนิด
+            // คงเหลือ
             // 
-            this.ชนิด.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.ชนิด.Location = new System.Drawing.Point(46, 238);
-            this.ชนิด.Name = "ชนิด";
-            this.ชนิด.Size = new System.Drawing.Size(326, 49);
-            this.ชนิด.TabIndex = 4;
-            this.ชนิด.Text = "";
-            this.ชนิด.TextChanged += new System.EventHandler(this.ชนิด_TextChanged);
+            this.คงเหลือ.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.คงเหลือ.Location = new System.Drawing.Point(46, 471);
+            this.คงเหลือ.Name = "คงเหลือ";
+            this.คงเหลือ.Size = new System.Drawing.Size(326, 49);
+            this.คงเหลือ.TabIndex = 4;
+            this.คงเหลือ.Text = "";
+            this.คงเหลือ.TextChanged += new System.EventHandler(this.ชนิด_TextChanged);
             // 
             // ชื่อ
             // 
@@ -413,7 +414,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label3.Location = new System.Drawing.Point(39, 300);
+            this.label3.Location = new System.Drawing.Point(39, 202);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(127, 37);
             this.label3.TabIndex = 2;
@@ -423,11 +424,11 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("TH Sarabun New", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label2.Location = new System.Drawing.Point(39, 198);
+            this.label2.Location = new System.Drawing.Point(41, 441);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 37);
+            this.label2.Size = new System.Drawing.Size(95, 46);
             this.label2.TabIndex = 1;
-            this.label2.Text = "ชนิดอุปกรณ์";
+            this.label2.Text = "คงเหลือ";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
@@ -472,14 +473,14 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RichTextBox จำนวน;
-        private System.Windows.Forms.RichTextBox ชนิด;
+        private System.Windows.Forms.RichTextBox คงเหลือ;
         private System.Windows.Forms.RichTextBox ชื่อ;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.RichTextBox พร้อม;
+        private System.Windows.Forms.RichTextBox หาย;
         private System.Windows.Forms.RichTextBox ยืม;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label10;

@@ -25,7 +25,7 @@ namespace Demov0._1
         public Equipment()
         {
             InitializeComponent();
-            sqlite_conn = new SQLiteConnection("Data Source=DatabaseAll.db;Version=3;");
+            sqlite_conn = new SQLiteConnection("Data Source=DB.db;Version=3;");
             sqlite_conn.Open();
             LoadData();
         }
@@ -47,9 +47,8 @@ namespace Demov0._1
                 string searchValue = textBox1.Text.Trim();
                 string query = $@"
                         SELECT * FROM Equipment
-                        WHERE รหัสอุปกรณ์ LIKE @SearchValue
+                        WHERE ลำดับ LIKE @SearchValue
                         OR ชื่ออุปกรณ์ LIKE @SearchValue
-                        OR ชนิดอุปกรณ์ LIKE @SearchValue
                         LIMIT @PageSize OFFSET @Offset";
 
                 SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn);
@@ -65,10 +64,10 @@ namespace Demov0._1
                 dataGridView2.AutoGenerateColumns = true;
                 dataGridView2.DataSource = dataTable;
                 dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dataGridView2.Columns["Id"].Visible = false;
-                dataGridView2.Columns["จำนวนหาย"].Visible = false;
-                dataGridView2.Columns["จำนวนไม่พร้อมใช้งาน"].Visible = false;
-                dataGridView2.Columns["จำนวนการคืน"].Visible = false;
+                dataGridView2.Columns["ลำดับ"].Visible = false;
+                //dataGridView2.Columns["จำนวนหาย"].Visible = false;
+                //dataGridView2.Columns["จำนวนไม่พร้อมใช้งาน"].Visible = false;
+                //dataGridView2.Columns["จำนวนการคืน"].Visible = false;
 
                 
                 UpdatePaginationInfo();
@@ -85,9 +84,8 @@ namespace Demov0._1
                 // คำนวณจำนวนรายการทั้งหมด
                 string countQuery = @"
                     SELECT COUNT(*) FROM Equipment
-                    WHERE รหัสอุปกรณ์ LIKE @SearchValue
-                    OR ชื่ออุปกรณ์ LIKE @SearchValue
-                    OR ชนิดอุปกรณ์ LIKE @SearchValue";
+                    WHERE ลำดับ LIKE @SearchValue
+                    OR ชื่ออุปกรณ์ LIKE @SearchValue";
 
                 SQLiteCommand countCmd = new SQLiteCommand(countQuery, sqlite_conn);
                 countCmd.Parameters.AddWithValue("@SearchValue", $"%{textBox1.Text.Trim()}%");
@@ -147,15 +145,13 @@ namespace Demov0._1
                 selectedIndex = e.RowIndex;
                 DataGridViewRow row = dataGridView2.Rows[selectedIndex];
 
-                รหัส.Text = row.Cells["รหัสอุปกรณ์"].Value.ToString();
+                รหัส.Text = row.Cells["ลำดับ"].Value.ToString();
                 ชื่อ.Text = row.Cells["ชื่ออุปกรณ์"].Value.ToString();
-                ชนิด.Text = row.Cells["ชนิดอุปกรณ์"].Value.ToString();
                 จำนวน.Text = row.Cells["จำนวนทั้งหมด"].Value.ToString();
                 ยืม.Text = row.Cells["จำนวนการยืม"].Value.ToString();
-                //คืน.Text = row.Cells["จำนวนการคืน"].Value.ToString();
-                พร้อม.Text = row.Cells["จำนวนพร้อมใช้งาน"].Value.ToString();
-                //ไม่พร้อม.Text = row.Cells["จำนวนไม่พร้อมใช้งาน"].Value.ToString();
-                //หาย.Text = row.Cells["จำนวนหาย"].Value.ToString();
+                คงเหลือ.Text = row.Cells["คงเหลือ"].Value.ToString();
+                หาย.Text = row.Cells["จำนวนหาย"].Value.ToString();
+                
             }
         }
 
@@ -164,17 +160,17 @@ namespace Demov0._1
              try
             {
                 string insertQuery = @"
-                INSERT INTO Equipment (รหัสอุปกรณ์, ชื่ออุปกรณ์, ชนิดอุปกรณ์, จำนวนทั้งหมด, จำนวนการยืม, จำนวนการคืน, จำนวนพร้อมใช้งาน, จำนวนไม่พร้อมใช้งาน, จำนวนหาย)
-                VALUES (@รหัสอุปกรณ์, @ชื่ออุปกรณ์, @ชนิดอุปกรณ์, @จำนวนทั้งหมด, @จำนวนการยืม, @จำนวนการคืน, @จำนวนพร้อมใช้งาน, @จำนวนไม่พร้อมใช้งาน, @จำนวนหาย)";
+                INSERT INTO Equipment (ลำดับ, ชื่ออุปกรณ์, จำนวนทั้งหมด, จำนวนการยืม, คงเหลือ, จำนวนหาย)
+                VALUES (@ลำลับ, @ชื่ออุปกรณ์,  @จำนวนทั้งหมด, @จำนวนการยืม, @คงเหลือ,  @จำนวนหาย)";
 
                 SQLiteCommand insertCmd = new SQLiteCommand(insertQuery, sqlite_conn);
                 insertCmd.Parameters.AddWithValue("@รหัสอุปกรณ์", รหัส.Text);
                 insertCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", ชื่อ.Text);
-                insertCmd.Parameters.AddWithValue("@ชนิดอุปกรณ์", ชนิด.Text);
+                
                 insertCmd.Parameters.AddWithValue("@จำนวนทั้งหมด", จำนวน.Text);
                 insertCmd.Parameters.AddWithValue("@จำนวนการยืม", ยืม.Text);
-                //insertCmd.Parameters.AddWithValue("@จำนวนการคืน", คืน.Text);
-                insertCmd.Parameters.AddWithValue("@จำนวนพร้อมใช้งาน", พร้อม.Text);
+                insertCmd.Parameters.AddWithValue("@คงดหลือ", คงเหลือ.Text);
+                insertCmd.Parameters.AddWithValue("@หาย", หาย.Text);
                 //insertCmd.Parameters.AddWithValue("@จำนวนไม่พร้อมใช้งาน", ไม่พร้อม.Text);
                 //insertCmd.Parameters.AddWithValue("@จำนวนหาย", หาย.Text);
                 
@@ -244,7 +240,7 @@ namespace Demov0._1
             {
                 try
                 {
-                    int id = Convert.ToInt32(dataGridView2.Rows[selectedIndex].Cells["Id"].Value);
+                    int id = Convert.ToInt32(dataGridView2.Rows[selectedIndex].Cells["ลำดับ"].Value);
 
                     string deleteQuery = "DELETE FROM Equipment WHERE Id = @Id";
                     SQLiteCommand deleteCmd = new SQLiteCommand(deleteQuery, sqlite_conn);
@@ -277,23 +273,22 @@ namespace Demov0._1
                     UPDATE Equipment 
                     SET รหัสอุปกรณ์ = @รหัสอุปกรณ์, 
                         ชื่ออุปกรณ์ = @ชื่ออุปกรณ์, 
-                        ชนิดอุปกรณ์ = @ชนิดอุปกรณ์,
+                        
                         จำนวนทั้งหมด = @จำนวนทั้งหมด,
                         จำนวนการยืม = @จำนวนการยืม,
-                        จำนวนการคืน = @จำนวนการคืน,
-                        จำนวนพร้อมใช้งาน = @จำนวนพร้อมใช้งาน,
-                        จำนวนไม่พร้อมใช้งาน = @จำนวนไม่พร้อมใช้งาน,
+                        คงเหลือ = @คงเหลือ,
+                        
                         จำนวนหาย = @จำนวนหาย
                     WHERE Id = @Id";
 
                     SQLiteCommand updateCmd = new SQLiteCommand(updateQuery, sqlite_conn);
                     updateCmd.Parameters.AddWithValue("@รหัสอุปกรณ์", รหัส.Text);
                     updateCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", ชื่อ.Text);
-                    updateCmd.Parameters.AddWithValue("@ชนิดอุปกรณ์", ชนิด.Text);
+                    
                     updateCmd.Parameters.AddWithValue("@จำนวนทั้งหมด", จำนวน.Text);
                     updateCmd.Parameters.AddWithValue("@จำนวนการยืม", ยืม.Text);
-                    //updateCmd.Parameters.AddWithValue("@จำนวนการคืน", คืน.Text);
-                    updateCmd.Parameters.AddWithValue("@จำนวนพร้อมใช้งาน", พร้อม.Text);
+                    updateCmd.Parameters.AddWithValue("@คงเหลือ", คงเหลือ.Text);
+                    updateCmd.Parameters.AddWithValue("@หาย", หาย.Text);
                     //updateCmd.Parameters.AddWithValue("@จำนวนไม่พร้อมใช้งาน", ไม่พร้อม.Text);
                     //updateCmd.Parameters.AddWithValue("@จำนวนหาย", หาย.Text);
                     updateCmd.Parameters.AddWithValue("@Id", id);
@@ -419,7 +414,10 @@ namespace Demov0._1
         {
 
         }
-        
 
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

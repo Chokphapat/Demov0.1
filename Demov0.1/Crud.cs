@@ -828,11 +828,6 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
         {
             //เก็บข้อมูลที่อยู่
         }
-
-        private void comboBox2_SelectedIndexChanged_2(object sender, EventArgs e)
-        {
-
-        }
     }
     
 }
