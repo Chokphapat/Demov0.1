@@ -103,51 +103,71 @@ namespace Demov0._1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string text1 = comboBox1.SelectedItem?.ToString(); // ชื่ออุปกรณ์
-            //string text2 = comboBox2.Text; // ชนิดอุปกรณ์
-            string user = comboBox2.SelectedItem?.ToString(); // ชื่อผู้ใช้งาน
-            string note = richTextBox6.Text; // หมายเหตุ
-            string action = "ยืม"; // ตั้งค่าการกระทำเป็น "ยืม"
-            string many = richTextBox1.Text;
-            string hours = textBox2.Text;
-            //string minutes = textBox3.Text;
-            string Time = dateTimePicker1.Text;
-            int amount = 0;
+            // ดึงค่าจากฟอร์ม
+            string text1 = comboBox1.SelectedItem?.ToString();
+            string user = comboBox2.SelectedItem?.ToString();
+            string note = richTextBox6.Text;
+            string phone = textBox2.Text;
+            string address = textBox3.Text;
+            string time = dateTimePicker1.Text;
 
-            if (string.IsNullOrEmpty(text1) || string.IsNullOrEmpty(action) || !int.TryParse(richTextBox1.Text, out amount) || amount <= 0)
+            // แปลงจำนวนเป็นตัวเลข
+            if (!int.TryParse(richTextBox1.Text, out int amount) || amount <= 0)
             {
-                MessageBox.Show("กรุณาเลือกชื่ออุปกรณ์ ประเภท และกรอกจำนวนที่ถูกต้อง", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("กรุณากรอกจำนวนที่ถูกต้อง (ต้องเป็นตัวเลขมากกว่า 0)",
+                              "ข้อผิดพลาด",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Error);
                 return;
             }
 
             try
             {
-                // ดำเนินการอัปเดตการยืม
+                // คำสั่ง SQL ที่ถูกต้อง
                 string insertBorrowMessage = @"INSERT INTO Borrow 
-(ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ) 
-VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
+        (ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ, จำนวน, ประวัติการยืม) 
+        VALUES 
+        (@Text1, @Date, @User, @Phone, @Address, @Note, @Amount, @History)";
 
-                SQLiteCommand borrowMessageCmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
-                borrowMessageCmd.Parameters.AddWithValue("@Text1", text1);
-                borrowMessageCmd.Parameters.AddWithValue("@Date", Time);
-                borrowMessageCmd.Parameters.AddWithValue("@User", user);
-                borrowMessageCmd.Parameters.AddWithValue("@Phone", textBox2.Text); // เบอร์โทร
-                borrowMessageCmd.Parameters.AddWithValue("@Address", textBox3.Text); // ที่อยู่
-                borrowMessageCmd.Parameters.AddWithValue("@Note", note);
-                borrowMessageCmd.ExecuteNonQuery();
+                SQLiteCommand cmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
 
+                // กำหนดค่าพารามิเตอร์
+                cmd.Parameters.AddWithValue("@Text1", text1);
+                cmd.Parameters.AddWithValue("@Date", time);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Phone", phone);
+                cmd.Parameters.AddWithValue("@Address", address);
+                cmd.Parameters.AddWithValue("@Note", note);
+                cmd.Parameters.AddWithValue("@Amount", amount);
 
-                // เคลียร์ฟอร์ม
-                ClearForm();
+                // กำหนดค่าประวัติการยืม (ตัวอย่าง)
+                string borrowHistory = $"ยืม {amount} ชิ้น เมื่อ {DateTime.Now.ToString("dd/MM/yyyy HH:mm")}";
+                cmd.Parameters.AddWithValue("@History", borrowHistory);
+                
 
-                // โหลดข้อมูลใหม่
-                LoadData();
+                if (string.IsNullOrWhiteSpace(note))
+                {
+                    string upnote = $"ยังขาด ({amount})";
+                    cmd.Parameters["@Note"].Value = upnote; // แก้ค่าหาก note ว่าง
+                }
+                // Execute และจัดการผลลัพธ์
+                int rowsAffected = cmd.ExecuteNonQuery();
 
-                MessageBox.Show($"บันทึกข้อมูลการ{action}สำเร็จ");
+                if (rowsAffected > 0)
+                {
+                    ClearForm();
+                    LoadData();
+                    MessageBox.Show("บันทึกข้อมูลการยืมสำเร็จ");
+
+                }
+                
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}\n\nโปรดตรวจสอบข้อมูลและลองอีกครั้ง",
+                              "ข้อผิดพลาด",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Error);
             }
         }
 
@@ -368,40 +388,34 @@ VALUES (@Text1, @Date, @User, @Phone, @Address, @Note)";
                 DataGridViewRow row = dataGridView1.Rows[index];
 
                 comboBox1.SelectedItem = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
-                //comboBox2.Text = row.Cells[2].Value?.ToString();
-                //combobox2.Text = row.Cells[3].Value?.ToString();
-                //dateTimePicker1.Text = row.Cells[4].Value?.ToString();
-                //richTextBox4.Text = row.Cells[5].Value?.ToString();
-                comboBox2.Text = row.Cells[6].Value?.ToString();
-                richTextBox6.Text = row.Cells[7].Value?.ToString();
-                richTextBox1.Text= row.Cells[8].Value?.ToString();
 
-                string value = row.Cells[5].Value?.ToString();
+                // เช็คว่า column index น้อยกว่า columns ที่มีอยู่จริง
+                if (row.Cells.Count > 6) comboBox2.Text = row.Cells[6].Value?.ToString();
+                if (row.Cells.Count > 7) richTextBox6.Text = row.Cells[7].Value?.ToString();
+                if (row.Cells.Count > 8) richTextBox1.Text = row.Cells[8].Value?.ToString();
+
+                string value = row.Cells.Count > 5 ? row.Cells[5].Value?.ToString() : null;
 
                 if (!string.IsNullOrEmpty(value))
                 {
-                    
                     string[] parts = value.Split(':');
-
-                    // ตรวจสอบว่ามีข้อมูลเพียงพอ
                     if (parts.Length == 2)
                     {
-                        textBox2.Text = parts[0]; // รับส่วนแรก เช่น 12
-                        //textBox3.Text = parts[1]; // รับส่วนหลัง เช่น 16
+                        textBox2.Text = parts[0];
                     }
                     else
                     {
-                        textBox2.Text = ""; // กรณีที่ไม่มีข้อมูลที่ต้องการ
-                        //textBox3.Text = "";
+                        textBox2.Text = "";
                     }
                 }
                 else
                 {
-                    textBox2.Text = ""; // กรณีค่าเป็น null หรือว่าง
-                    //textBox3.Text = "";
+                    textBox2.Text = "";
                 }
             }
+
         }
+        
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
