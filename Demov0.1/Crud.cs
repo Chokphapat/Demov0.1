@@ -197,7 +197,7 @@ namespace Demov0._1
             try
             {
 
-                string selectQuery = "SELECT ลำดับ, ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ FROM Borrow";
+                string selectQuery = "SELECT ลำดับ, ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ, จำนวน FROM Borrow";
 
                 SQLiteCommand selectCmd = new SQLiteCommand(selectQuery, sqlite_conn);
                 SQLiteDataAdapter adapter = new SQLiteDataAdapter(selectCmd);
@@ -210,7 +210,7 @@ namespace Demov0._1
                 dataGridView1.Columns["วันที่"].Width = 150;
                 //dataGridView1.Columns["ชนิดอุปกรณ์"].Visible = false;
                 //dataGridView1.Columns["เวลา"].Visible = false;
-                //dataGridView1.Columns["จำนวน"].Visible = false;
+                dataGridView1.Columns["จำนวน"].Visible = false;
                 //dataGridView1.Columns["ประวัติการยืมคืน"].Visible = false;
 
             }
@@ -388,34 +388,21 @@ namespace Demov0._1
                 DataGridViewRow row = dataGridView1.Rows[index];
 
                 comboBox1.SelectedItem = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
+                //comboBox2.Text = row.Cells[2].Value?.ToString();
+                //combobox2.Text = row.Cells[3].Value?.ToString();
+                dateTimePicker1.Text = row.Cells["วันที่"].Value?.ToString();
+                //richTextBox4.Text = row.Cells[5].Value?.ToString();
+                comboBox2.Text = row.Cells["ชื่อผู้ยืม"].Value?.ToString();
+                textBox2.Text = row.Cells["เบอร์โทร"].Value?.ToString();
+                textBox3.Text = row.Cells["ที่อยู่"].Value?.ToString();
+                richTextBox6.Text = row.Cells["หมายเหตุ"].Value?.ToString();
+                richTextBox1.Text= row.Cells["จำนวน"].Value?.ToString();
 
-                // เช็คว่า column index น้อยกว่า columns ที่มีอยู่จริง
-                if (row.Cells.Count > 6) comboBox2.Text = row.Cells[6].Value?.ToString();
-                if (row.Cells.Count > 7) richTextBox6.Text = row.Cells[7].Value?.ToString();
-                if (row.Cells.Count > 8) richTextBox1.Text = row.Cells[8].Value?.ToString();
+                string value = row.Cells[5].Value?.ToString();
 
-                string value = row.Cells.Count > 5 ? row.Cells[5].Value?.ToString() : null;
-
-                if (!string.IsNullOrEmpty(value))
-                {
-                    string[] parts = value.Split(':');
-                    if (parts.Length == 2)
-                    {
-                        textBox2.Text = parts[0];
-                    }
-                    else
-                    {
-                        textBox2.Text = "";
-                    }
-                }
-                else
-                {
-                    textBox2.Text = "";
-                }
+               
             }
-
         }
-        
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
