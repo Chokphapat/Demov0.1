@@ -16,20 +16,17 @@ namespace Demov0._1
     public partial class Return : Form
     {
         private SQLiteConnection sqlite_conn;
-        private SQLiteConnection equipment_conn;
+        
         int index;
         public Return()
         {
             InitializeComponent();
             this.Load += Return_Load;
-            sqlite_conn = new SQLiteConnection("Data Source=your_database_v5.db;Version=3;");
-            equipment_conn = new SQLiteConnection("Data Source=DatabaseAll.db;Version=3;");
+            sqlite_conn = new SQLiteConnection("Data Source=DB.db;Version=3;");
+            
             sqlite_conn.Open();
-            equipment_conn.Open();
+            
 
-            string createTableQuery = "CREATE TABLE IF NOT EXISTS Messages (Id INTEGER PRIMARY KEY, ชื่ออุปกรณ์ TEXT, ชนิดอุปกรณ์ TEXT, ประวัติการยืมคืน TEXT, วัน เดือน ปี TEXT, เวลา TEXT, ชื่อผู้ใช้ TEXT, หมายเหตุ TEXT)";
-            SQLiteCommand createTableCmd = new SQLiteCommand(createTableQuery, sqlite_conn);
-            createTableCmd.ExecuteNonQuery();
             
 
         }
@@ -59,22 +56,9 @@ namespace Demov0._1
                     string[] parts = value.Split(':');
 
                     // ตรวจสอบว่ามีข้อมูลเพียงพอ
-                    if (parts.Length == 2)
-                    {
-                        textBox2.Text = parts[0]; // รับส่วนแรก เช่น 12
-                        textBox3.Text = parts[1]; // รับส่วนหลัง เช่น 16
-                    }
-                    else
-                    {
-                        textBox2.Text = ""; // กรณีที่ไม่มีข้อมูลที่ต้องการ
-                        textBox3.Text = "";
-                    }
+                    
                 }
-                else
-                {
-                    textBox2.Text = ""; // กรณีค่าเป็น null หรือว่าง
-                    textBox3.Text = "";
-                }
+                
             }
         
         }
@@ -82,7 +66,7 @@ namespace Demov0._1
         {
             try
             {
-                string selectQuery = "SELECT * FROM Messages";
+                string selectQuery = "SELECT * FROM Return";
                 SQLiteCommand selectCmd = new SQLiteCommand(selectQuery, sqlite_conn);
                 SQLiteDataAdapter adapter = new SQLiteDataAdapter(selectCmd);
                 DataTable dataTable = new DataTable();
@@ -90,10 +74,10 @@ namespace Demov0._1
 
                 dataGridView1.DataSource = dataTable;
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dataGridView1.Columns["id"].Width = 50;
-                dataGridView1.Columns["วัน_เดือน_ปี"].Width = 130;
-                dataGridView1.Columns["เวลา"].Width = 70;
-                dataGridView1.Columns["จำนวน"].Visible = false;
+                //dataGridView1.Columns["id"].Width = 50;
+               // dataGridView1.Columns["วัน_เดือน_ปี"].Width = 130;
+                //dataGridView1.Columns["เวลา"].Width = 70;
+                //dataGridView1.Columns["จำนวน"].Visible = false;
 
             }
             catch (Exception ex)
