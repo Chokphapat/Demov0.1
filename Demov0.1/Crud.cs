@@ -111,6 +111,12 @@ namespace Demov0._1
             string address = textBox3.Text;
             string time = dateTimePicker1.Text;
 
+            string getLastCodeQuery = "SELECT MAX(ลำดับ) FROM Return";
+            SQLiteCommand getCodeCmd = new SQLiteCommand(getLastCodeQuery, sqlite_conn);
+            object result = getCodeCmd.ExecuteScalar();
+            int newId = (result != DBNull.Value) ? Convert.ToInt32(result) + 1 : 0;
+            string newCode = newId.ToString("D10");
+
             // แปลงจำนวนเป็นตัวเลข
             if (!int.TryParse(richTextBox1.Text, out int amount) || amount <= 0)
             {
@@ -125,9 +131,9 @@ namespace Demov0._1
             {
                 // คำสั่ง SQL ที่ถูกต้อง
                 string insertBorrowMessage = @"INSERT INTO Borrow 
-        (ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ, จำนวน, ประวัติการยืม) 
+        (ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ, จำนวน, ประวัติการยืม, รายการ) 
         VALUES 
-        (@Text1, @Date, @User, @Phone, @Address, @Note, @Amount, @History)";
+        (@Text1, @Date, @User, @Phone, @Address, @Note, @Amount, @History ,@Code)";
 
                 SQLiteCommand cmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
 
@@ -139,19 +145,51 @@ namespace Demov0._1
                 cmd.Parameters.AddWithValue("@Address", address);
                 cmd.Parameters.AddWithValue("@Note", note);
                 cmd.Parameters.AddWithValue("@Amount", amount);
+                cmd.Parameters.AddWithValue("@Code", newCode);
 
                 // กำหนดค่าประวัติการยืม (ตัวอย่าง)
                 string borrowHistory = $"ยืม {amount} ชิ้น เมื่อ {DateTime.Now.ToString("dd/MM/yyyy HH:mm")}";
                 cmd.Parameters.AddWithValue("@History", borrowHistory);
-                
-
                 if (string.IsNullOrWhiteSpace(note))
                 {
                     string upnote = $"ยังขาด ({amount})";
                     cmd.Parameters["@Note"].Value = upnote; // แก้ค่าหาก note ว่าง
                 }
-                // Execute และจัดการผลลัพธ์
+
                 int rowsAffected = cmd.ExecuteNonQuery();
+
+
+                if (rowsAffected > 0)
+                {
+                   
+                    
+                    
+
+                     // แปลงเป็น 10 หลัก เช่น 0000000001
+
+                    string insertReturnQuery = @"INSERT INTO Return 
+                    (ลำดับ, ชื่อ, อุปกรณ์, จำนวน, วันที่, ประวัติการคืน, รายละเอียด, รายการ)
+                    VALUES 
+                    (@Id, @User, @Device, @Amount, @Date, @ReturnHistory, @Detail, @Code)";
+
+                    SQLiteCommand returnCmd = new SQLiteCommand(insertReturnQuery, sqlite_conn);
+                    returnCmd.Parameters.AddWithValue("@Id", newId);
+                    returnCmd.Parameters.AddWithValue("@User", user);
+                    returnCmd.Parameters.AddWithValue("@Device", text1);
+                    returnCmd.Parameters.AddWithValue("@Amount", amount);
+                    returnCmd.Parameters.AddWithValue("@Date", time);
+                    returnCmd.Parameters.AddWithValue("@ReturnHistory", $"0/{amount}");
+                    returnCmd.Parameters.AddWithValue("@Detail", note);
+                    returnCmd.Parameters.AddWithValue("@Code", newCode);
+
+                    returnCmd.ExecuteNonQuery();
+
+                    ClearForm();
+                    LoadData();
+                    MessageBox.Show("บันทึกข้อมูลการยืมและรายการคืนสำเร็จ");
+                }
+                
+                
 
                 if (rowsAffected > 0)
                 {
@@ -387,7 +425,7 @@ namespace Demov0._1
                 index = e.RowIndex;
                 DataGridViewRow row = dataGridView1.Rows[index];
 
-                comboBox1.SelectedItem = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
+                comboBox1.Text = row.Cells["ชื่ออุปกรณ์"].Value?.ToString();
                 //comboBox2.Text = row.Cells[2].Value?.ToString();
                 //combobox2.Text = row.Cells[3].Value?.ToString();
                 dateTimePicker1.Text = row.Cells["วันที่"].Value?.ToString();
