@@ -443,7 +443,7 @@ namespace Demov0._1
             UPDATE Borrow 
             SET ชื่ออุปกรณ์ = @Text1, 
                  
-                ประวัติการยืมคืน = @Text3, 
+                 
                 วันที่ = @Text4, 
                 เวลา = @Time, 
                 ชื่อผู้ยืม = @Text6, 
@@ -536,7 +536,7 @@ namespace Demov0._1
             string searchValue = textBox1.Text;
             try
             {
-                string searchQuery = "SELECT * FROM Borrow WHERE ชื่ออุปกรณ์ LIKE @SearchValue OR ประวัติการยืมคืน LIKE @SearchValue OR วันที่ LIKE @SearchValue OR ชื่อผู้ยืม LIKE @SearchValue ";
+                string searchQuery = "SELECT * FROM Borrow WHERE ชื่ออุปกรณ์  LIKE @SearchValue OR วันที่ LIKE @SearchValue OR ชื่อผู้ยืม LIKE @SearchValue ";
                 using (SQLiteCommand searchCmd = new SQLiteCommand(searchQuery, sqlite_conn))
                 {
                     searchCmd.Parameters.AddWithValue("@SearchValue", "%" + searchValue + "%");
@@ -545,6 +545,8 @@ namespace Demov0._1
                     adapter.Fill(dataTable);
 
                     dataGridView1.DataSource = dataTable;
+                    dataGridView1.Columns["รายการ"].Visible = false;
+                    dataGridView1.Columns["ประวัติการยืม"].Visible = false;
                     currentPage = 1; // รีเซ็ตเป็นหน้าแรกเมื่อมีการค้นหาใหม่
                     LoadPagedData();
                 }
@@ -579,7 +581,7 @@ namespace Demov0._1
             SELECT * FROM Borrow
             WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
            
-            OR ประวัติการยืมคืน LIKE '%{searchValue}%'
+            
             OR วันที่ LIKE '%{searchValue}%'
             OR ชื่อผู้ยืม LIKE '%{searchValue}%'
             LIMIT @PageSize OFFSET @Offset";
@@ -616,7 +618,7 @@ namespace Demov0._1
         SELECT COUNT(*) FROM Borrow
         WHERE ชื่ออุปกรณ์ LIKE '%{searchValue}%'
          
-        OR ประวัติการยืมคืน LIKE '%{searchValue}%'
+        
         OR วันที่ LIKE '%{searchValue}%'
         OR ชื่อผู้ยืม LIKE '%{searchValue}%'";
 
