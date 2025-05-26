@@ -25,9 +25,9 @@ namespace Demov0._1
             sqlite_conn = new SQLiteConnection("Data Source=DB.db;Version=3;");
             
             sqlite_conn.Open();
-            
 
-            
+
+           
 
         }
 

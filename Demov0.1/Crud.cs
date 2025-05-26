@@ -18,7 +18,10 @@ namespace Demov0._1
     public partial class Crud : Form
     {
         private SQLiteConnection sqlite_conn;
-        
+        //นำข้อมูลในฐานข้อมูลมาอยู่ในรูปแบบ List<string>
+        private List<string> originalItems = new List<string>();
+        private List<string> originalItems2 = new List<string>();
+
         int index;
         
 
@@ -38,15 +41,71 @@ namespace Demov0._1
 
             LoadComboBoxData();
 
-            
+
+            LoadDataFromDatabase(); // โหลดข้อมูล
+            SetupComboBoxSearch(); // ตั้งค่าฟังก์ชันค้นหา
+            LoadDataFromDatabase2(); // โหลดข้อมูลผู้ใช้
+            SetupComboBoxSearch2(); // ตั้งค่าฟังก์ชันค้นหา ComboBox2
+        }
+        private void LoadDataFromDatabase()
+        {
+            // ตัวอย่างการเชื่อมต่อ SQLite
+            string connectionString = "Data Source=DB.db;";
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT ชื่ออุปกรณ์ FROM Equipment"; // เปลี่ยนชื่อตาราง/คอลัมน์ตามจริง
+                using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
+                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        originalItems.Add(reader["ชื่ออุปกรณ์"].ToString());
+                    }
+                }
+            }
+
+            // ใส่รายการลง ComboBox
+            comboBox1.Items.AddRange(originalItems.ToArray());
+        }
+
+        private void SetupComboBoxSearch()
+        {
             comboBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBox1.AutoCompleteSource = AutoCompleteSource.ListItems;
 
-
-
-
+            comboBox1.TextChanged += comboBox1_SelectedIndexChanged;
         }
 
+        private void LoadDataFromDatabase2()
+        {
+            // ตัวอย่างการเชื่อมต่อ SQLite
+            string connectionString = "Data Source=DB.db;";
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT ชื่อ FROM User"; // เปลี่ยนชื่อตาราง/คอลัมน์ตามจริง
+                using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
+                using (SQLiteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        originalItems.Add(reader["ชื่อ"].ToString());
+                    }
+                }
+            }
+
+            // ใส่รายการลง ComboBox
+            comboBox1.Items.AddRange(originalItems.ToArray());
+        }
+
+        private void SetupComboBoxSearch2()
+        {
+            comboBox2.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            comboBox2.AutoCompleteSource = AutoCompleteSource.ListItems;
+
+            comboBox2.TextChanged += comboBox2_SelectedIndexChanged;
+        }
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -767,6 +826,25 @@ namespace Demov0._1
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string searchText = comboBox1.Text;
+
+            comboBox1.TextChanged -= comboBox1_SelectedIndexChanged;
+            int selectionStart = comboBox1.SelectionStart;
+
+            // กรองจาก originalItems ที่มาจากฐานข้อมูล
+            var filtered = originalItems
+                .Where(item => item.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToArray();
+
+            comboBox1.Items.Clear();
+            comboBox1.Items.AddRange(filtered);
+            comboBox1.DroppedDown = true;
+
+            comboBox1.Text = searchText;
+            comboBox1.SelectionStart = selectionStart;
+            comboBox1.SelectionLength = 0;
+
+            comboBox1.TextChanged += comboBox1_SelectedIndexChanged;
             // ตรวจสอบว่ามีการเลือกข้อมูลใน ComboBox1 หรือไม่
             if (comboBox1.SelectedItem != null)
             {
@@ -777,6 +855,8 @@ namespace Demov0._1
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string searchText = comboBox2.Text;
+
             if (comboBox2.SelectedItem != null)
             {
                 string selectedName = comboBox2.SelectedItem.ToString();
