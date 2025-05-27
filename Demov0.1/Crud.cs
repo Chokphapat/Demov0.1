@@ -39,7 +39,7 @@ namespace Demov0._1
             SQLiteCommand createTableCmd = new SQLiteCommand(createTableQuery, sqlite_conn);
             createTableCmd.ExecuteNonQuery();*/
 
-            LoadComboBoxData();
+            //LoadComboBoxData();
 
 
             LoadDataFromDatabase(); // โหลดข้อมูล
@@ -90,13 +90,13 @@ namespace Demov0._1
                 {
                     while (reader.Read())
                     {
-                        originalItems.Add(reader["ชื่อ"].ToString());
+                        originalItems2.Add(reader["ชื่อ"].ToString());
                     }
                 }
             }
 
             // ใส่รายการลง ComboBox
-            comboBox1.Items.AddRange(originalItems.ToArray());
+            comboBox2.Items.AddRange(originalItems2.ToArray());
         }
 
         private void SetupComboBoxSearch2()
