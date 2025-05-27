@@ -830,28 +830,46 @@ namespace Demov0._1
         {
             string searchText = comboBox1.Text;
 
-            comboBox1.TextChanged -= comboBox1_SelectedIndexChanged;
-            int selectionStart = comboBox1.SelectionStart;
-
-            // กรองจาก originalItems ที่มาจากฐานข้อมูล
-            var filtered = originalItems
-                .Where(item => item.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-                .ToArray();
-
-            comboBox1.Items.Clear();
-            comboBox1.Items.AddRange(filtered);
-            comboBox1.DroppedDown = true;
-
-            comboBox1.Text = searchText;
-            comboBox1.SelectionStart = selectionStart;
-            comboBox1.SelectionLength = 0;
-
-            comboBox1.TextChanged += comboBox1_SelectedIndexChanged;
-            // ตรวจสอบว่ามีการเลือกข้อมูลใน ComboBox1 หรือไม่
             if (comboBox1.SelectedItem != null)
             {
-                string selectedDeviceName = comboBox1.SelectedItem.ToString(); // ชื่ออุปกรณ์ที่เลือก
-                /*LoadDeviceType(selectedDeviceName); // ดึงข้อมูลชนิดอุปกรณ์และเติมใน ComboBox2*/
+                string selectedName = comboBox1.SelectedItem.ToString();
+                LoadItemDetails(selectedName); // เรียกเมธอดดึงข้อมูลผู้ใช้
+            }
+        }
+        private void LoadItemDetails(string itemName)
+        {
+            try
+            {
+                // แสดงชื่อที่กำลังค้นหา (สำหรับ debug)
+                Debug.WriteLine($"กำลังค้นหาชื่ออุปกรณ์: '{itemName}'");
+                string query = "SELECT ชื่ออุปกรณ์ FROM Equipment WHERE ชื่ออุปกรณ์ = @ItemName";
+                using (SQLiteCommand cmd = new SQLiteCommand(query, sqlite_conn))
+                {
+                    cmd.Parameters.AddWithValue("@ItemName", itemName);
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows) // ตรวจสอบว่ามีข้อมูลหรือไม่
+                        {
+                            while (reader.Read())
+                            {
+                                // Debug ข้อมูลที่ได้
+                                Debug.WriteLine($"พบข้อมูล: ชื่ออุปกรณ์={reader["ชื่ออุปกรณ์"]}");
+                                // เติมข้อมูลใน TextBox หรือ RichTextBox ตามต้องการ
+                                
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("ไม่พบข้อมูลอุปกรณ์");
+                            
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"เกิดข้อผิดพลาด: {ex.Message}");
+                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
