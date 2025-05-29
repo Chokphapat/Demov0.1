@@ -221,9 +221,6 @@ namespace Demov0._1
                 if (rowsAffected > 0)
                 {
                    
-                    
-                    
-
                      // แปลงเป็น 10 หลัก เช่น 0000000001
 
                     string insertReturnQuery = @"INSERT INTO Return 
@@ -272,7 +269,7 @@ namespace Demov0._1
         private void ClearForm()
         {
             comboBox1.SelectedIndex = -1;
-            comboBox1.Items.Clear(); // ล้างข้อมูลใน ComboBox
+            //comboBox1.Items.Clear(); // ล้างข้อมูลใน ComboBox
             richTextBox1.Clear();
             textBox2.Clear();
             //textBox3.Clear();
