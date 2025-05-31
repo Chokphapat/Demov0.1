@@ -165,6 +165,7 @@ namespace Demov0._1
 
         private void button1_Click(object sender, EventArgs e)
         {
+
             // ดึงค่าจากฟอร์ม
             string text1 = comboBox1.SelectedItem?.ToString();
             string user = comboBox2.SelectedItem?.ToString();
@@ -173,6 +174,7 @@ namespace Demov0._1
             string address = textBox3.Text;
             string time = dateTimePicker1.Text;
             
+
 
             string getLastCodeQuery = "SELECT MAX(ลำดับ) FROM Return";
             SQLiteCommand getCodeCmd = new SQLiteCommand(getLastCodeQuery, sqlite_conn);
@@ -192,11 +194,38 @@ namespace Demov0._1
 
             try
             {
+
                 // คำสั่ง SQL ที่ถูกต้อง
                 string insertBorrowMessage = @"INSERT INTO Borrow 
         (ชื่ออุปกรณ์, วันที่, ชื่อผู้ยืม, เบอร์โทร, ที่อยู่, หมายเหตุ, จำนวน, ประวัติการยืม, รายการ) 
         VALUES 
         (@Text1, @Date, @User, @Phone, @Address, @Note, @Amount, @History ,@Code)";
+
+                // ตรวจสอบจำนวนคงเหลือก่อน
+                string checkStockQuery = "SELECT คงเหลือ FROM Equipment WHERE ชื่ออุปกรณ์ = @DeviceName";
+                SQLiteCommand checkCmd = new SQLiteCommand(checkStockQuery, sqlite_conn);
+                checkCmd.Parameters.AddWithValue("@DeviceName", text1);
+
+                object stockResult = checkCmd.ExecuteScalar();
+
+                if (stockResult == null || stockResult == DBNull.Value)
+                {
+                    MessageBox.Show("ไม่พบอุปกรณ์ที่เลือก", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                int currentStock = Convert.ToInt32(stockResult);
+
+                // เช็คว่าเพียงพอให้ยืมหรือไม่
+                if (amount > currentStock)
+                {
+                    MessageBox.Show($"จำนวนคงเหลือไม่เพียงพอสำหรับการยืม\nคงเหลือ: {currentStock} | ต้องการยืม: {amount}",
+                                    "ข้อผิดพลาด",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                    return;
+                }
+
 
                 SQLiteCommand cmd = new SQLiteCommand(insertBorrowMessage, sqlite_conn);
 
@@ -228,9 +257,9 @@ namespace Demov0._1
                      // แปลงเป็น 10 หลัก เช่น 0000000001
 
                     string insertReturnQuery = @"INSERT INTO Return 
-                    (ลำดับ, ชื่อ, อุปกรณ์, จำนวน, วันที่, ประวัติการคืน, รายละเอียด, รายการ)
+                    (ลำดับ, ชื่อ, อุปกรณ์, จำนวนคืน, วันที่, ประวัติการคืน, รายละเอียด, รายการ)
                     VALUES 
-                    (@Id, @User, @Device, @Reamount, @Date, @ReturnHistory, @Detail, @Code)";
+                    (@Id, @User, @Device, @Reamount, @Date, @ReturnHistory, @Note, @Code)";
 
                     SQLiteCommand returnCmd = new SQLiteCommand(insertReturnQuery, sqlite_conn);
                     returnCmd.Parameters.AddWithValue("@Id", newId);
@@ -239,8 +268,10 @@ namespace Demov0._1
                     returnCmd.Parameters.AddWithValue("@Reamount", reamount);
                     returnCmd.Parameters.AddWithValue("@Date", time);
                     returnCmd.Parameters.AddWithValue("@ReturnHistory", $"0/{amount}");
-                    returnCmd.Parameters.AddWithValue("@Detail", note);
+                    returnCmd.Parameters.AddWithValue("@Note", note);
                     returnCmd.Parameters.AddWithValue("@Code", newCode);
+
+                   
 
                     returnCmd.ExecuteNonQuery();
 
@@ -349,34 +380,62 @@ namespace Demov0._1
                             {
                                 int id = Convert.ToInt32(selectedRow.Cells["ลำดับ"].Value);
 
-                                // ค้นหารายการจาก Borrow โดยใช้ ID
+                                // ดึงข้อมูลจาก Borrow และ Return ก่อนลบ
+                                string selectQuery = @"
+                                SELECT B.จำนวน, R.จำนวนคืน, B.ชื่ออุปกรณ์
+                                FROM Borrow B
+                                LEFT JOIN Return R ON R.รายการ = B.ลำดับ
+                                WHERE B.ลำดับ = @Id";
+
+                                SQLiteCommand selectCmd = new SQLiteCommand(selectQuery, sqlite_conn);
+                                selectCmd.Parameters.AddWithValue("@Id", id);
+                                SQLiteDataReader reader = selectCmd.ExecuteReader();
+
                                 string getItemQuery = "SELECT รายการ FROM Borrow WHERE ลำดับ = @Id";
                                 SQLiteCommand getItemCmd = new SQLiteCommand(getItemQuery, sqlite_conn);
                                 getItemCmd.Parameters.AddWithValue("@Id", id);
                                 object result = getItemCmd.ExecuteScalar();
 
-                                if (result != null)
+                                if (reader.Read())
                                 {
-                                    string itemName = result.ToString();
+                                    
+                                    int borrowAmount = reader["จำนวน"] != DBNull.Value ? Convert.ToInt32(reader["จำนวน"]) : 0;
+                                    int returnAmount = reader["จำนวนคืน"] != DBNull.Value ? Convert.ToInt32(reader["จำนวนคืน"]) : 0;
+                                    string deviceName = reader["ชื่ออุปกรณ์"].ToString();
 
-                                    // ลบจาก Borrow
-                                    string deleteBorrowQuery = "DELETE FROM Borrow WHERE รายการ = @Item";
-                                    SQLiteCommand deleteBorrowCmd = new SQLiteCommand(deleteBorrowQuery, sqlite_conn);
-                                    deleteBorrowCmd.Parameters.AddWithValue("@Item", itemName);
-                                    deleteBorrowCmd.ExecuteNonQuery();
+                                    reader.Close();
 
-                                    // ลบจากอีกตาราง เช่น Return (เปลี่ยนชื่อได้ตามจริง)
-                                    string deleteReturnQuery = "DELETE FROM Return WHERE รายการ = @Item";
-                                    SQLiteCommand deleteReturnCmd = new SQLiteCommand(deleteReturnQuery, sqlite_conn);
-                                    deleteReturnCmd.Parameters.AddWithValue("@Item", itemName);
-                                    deleteReturnCmd.ExecuteNonQuery();
+                                    if (result != null)
+                                    {
+                                        string itemName = result.ToString();
+
+                                        // ลบจาก Borrow
+                                        string deleteBorrowQuery = "DELETE FROM Borrow WHERE รายการ = @Item";
+                                        SQLiteCommand deleteBorrowCmd = new SQLiteCommand(deleteBorrowQuery, sqlite_conn);
+                                        deleteBorrowCmd.Parameters.AddWithValue("@Item", itemName);
+                                        deleteBorrowCmd.ExecuteNonQuery();
+
+                                        // ลบจากอีกตาราง เช่น Return (เปลี่ยนชื่อได้ตามจริง)
+                                        string deleteReturnQuery = "DELETE FROM Return WHERE รายการ = @Item";
+                                        SQLiteCommand deleteReturnCmd = new SQLiteCommand(deleteReturnQuery, sqlite_conn);
+                                        deleteReturnCmd.Parameters.AddWithValue("@Item", itemName);
+                                        deleteReturnCmd.ExecuteNonQuery();
+
+                                        // อัปเดตคงเหลือใน Equipment
+                                        string updateStockQuery = @"UPDATE Equipment
+                                SET คงเหลือ = คงเหลือ + @BorrowAmount - @ReturnAmount,
+                                    จำนวนการยืม = จำนวนการยืม - @BorrowAmount
+                                WHERE ชื่ออุปกรณ์ = @DeviceName";
+
+                                        SQLiteCommand updateStockCmd = new SQLiteCommand(updateStockQuery, sqlite_conn);
+                                        updateStockCmd.Parameters.AddWithValue("@ReturnAmount", returnAmount);
+                                        updateStockCmd.Parameters.AddWithValue("@BorrowAmount", borrowAmount);
+                                        updateStockCmd.Parameters.AddWithValue("@DeviceName", deviceName);
+                                        updateStockCmd.ExecuteNonQuery();
+                                    }
                                 }
-                                string updateStockQuery = @"UPDATE Equipment
-                                SET คงเหลือ = คงเหลือ - จำนวน +
-                                WHERE ชื่ออุปกรณ์ = @Device";
-                                SQLiteCommand updateStockCmd = new SQLiteCommand(updateStockQuery, sqlite_conn);
                                 
-                                updateStockCmd.ExecuteNonQuery();
+                                
                             }
                         }
 
@@ -399,7 +458,7 @@ namespace Demov0._1
 
         private void button4_Click(object sender, EventArgs e)//ปุ่มเเก้ไข
         {
-            string hours = textBox2.Text;
+            //string hours = textBox2.Text;
             //string minutes = textBox3.Text;
 
             try
@@ -411,7 +470,7 @@ namespace Demov0._1
 
                     // ดึงค่าก่อนหน้า (จาก DataGridView)
                     int b = Convert.ToInt32(row.Cells["จำนวน"].Value); // จำนวนก่อนหน้า
-                    string actionType = row.Cells["ประวัติการยืมคืน"].Value?.ToString(); // ตัวอย่าง: "ยืม" หรือ "คืน"
+                    string actionType = row.Cells["ประวัติการยืม"].Value?.ToString(); // ตัวอย่าง: "ยืม" หรือ "คืน"
 
                     // ค่าที่แก้ไขใหม่
                     int a = int.Parse(richTextBox1.Text); // ค่าจำนวนใหม่
