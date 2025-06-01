@@ -458,115 +458,116 @@ namespace Demov0._1
 
         private void button4_Click(object sender, EventArgs e)//ปุ่มเเก้ไข
         {
-            //string hours = textBox2.Text;
-            //string minutes = textBox3.Text;
-
             try
             {
-                if (index >= 0)
-                {
-                    DataGridViewRow row = dataGridView1.Rows[index];
-                    int id = Convert.ToInt32(row.Cells["ลำดับ"].Value);
-
-                    // ดึงค่าก่อนหน้า (จาก DataGridView)
-                    int b = Convert.ToInt32(row.Cells["จำนวน"].Value); // จำนวนก่อนหน้า
-                    string actionType = row.Cells["ประวัติการยืม"].Value?.ToString(); // ตัวอย่าง: "ยืม" หรือ "คืน"
-
-                    // ค่าที่แก้ไขใหม่
-                    int a = int.Parse(richTextBox1.Text); // ค่าจำนวนใหม่
-                    int c = a - b; // คำนวณความต่าง
-
-                    // อัปเดตในฐานข้อมูล Equipment
-                    string updateEquipmentQuery = "";
-                    if (actionType.Contains("ยืม"))
-                    {
-                        if (c > 0)
-                        {
-                            // กรณีเพิ่มการยืม
-                            updateEquipmentQuery = @"
-                    UPDATE Equipment 
-                    SET จำนวนการยืม = จำนวนการยืม + @c, 
-                        จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @c
-                    WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                        }
-                        else if (c < 0)
-                        {
-                            // กรณีลดการยืม
-                            updateEquipmentQuery = @"
-                    UPDATE Equipment 
-                    SET จำนวนการยืม = จำนวนการยืม - @c, 
-                        จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน + @c
-                    WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                        }
-                    }
-                    else if (actionType.Contains("คืน"))
-                    {
-                        if (c > 0)
-                        {
-                            // กรณีเพิ่มการคืน
-                            updateEquipmentQuery = @"
-                    UPDATE Equipment 
-                    SET จำนวนการคืน = จำนวนการคืน + @c, 
-                        จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน + @c,
-                        จำนวนการยืม = จำนวนการยืม -@c
-                    WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                        }
-                        else if (c < 0)
-                        {
-                            // กรณีลดการคืน
-                            updateEquipmentQuery = @"
-                    UPDATE Equipment 
-                    SET จำนวนการคืน = จำนวนการคืน - @c, 
-                        จำนวนพร้อมใช้งาน = จำนวนพร้อมใช้งาน - @c,
-                        จำนวนการยืม = จำนวนการยืม +@c
-                    WHERE ชื่ออุปกรณ์ = @ชื่ออุปกรณ์";
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(updateEquipmentQuery))
-                    {
-                        SQLiteCommand updateEquipmentCmd = new SQLiteCommand(updateEquipmentQuery, sqlite_conn);
-                        updateEquipmentCmd.Parameters.AddWithValue("@c", Math.Abs(c)); // ใช้ค่าความต่าง (บวก)
-                        updateEquipmentCmd.Parameters.AddWithValue("@ชื่ออุปกรณ์", comboBox1.Text);
-                        updateEquipmentCmd.ExecuteNonQuery();
-                    }
-
-                    // อัปเดตข้อมูลใน Messages
-                    string updateQuery = @"
-            UPDATE Borrow 
-            SET ชื่ออุปกรณ์ = @Text1, 
-                 
-                 
-                วันที่ = @Text4, 
-                เวลา = @Time, 
-                ชื่อผู้ยืม = @Text6, 
-                หมายเหตุ = @Text7,
-                จำนวน = @rich1
-            WHERE Id = @Id";
-                    SQLiteCommand updateCmd = new SQLiteCommand(updateQuery, sqlite_conn);
-                    updateCmd.Parameters.AddWithValue("@Text1", comboBox1.Text);
-                    //updateCmd.Parameters.AddWithValue("@Text2", comboBox2.Text);
-                    //updateCmd.Parameters.AddWithValue("@Text3", combobox2.Text);
-                    updateCmd.Parameters.AddWithValue("@Text4", dateTimePicker1.Text);
-                    //updateCmd.Parameters.AddWithValue("@Time", $"{hours}:{minutes}"); ;
-                    updateCmd.Parameters.AddWithValue("@Text6", comboBox2.Text);
-                    updateCmd.Parameters.AddWithValue("@Text7", richTextBox6.Text);
-                    updateCmd.Parameters.AddWithValue("@rich1", richTextBox1.Text);
-                    updateCmd.Parameters.AddWithValue("@Id", id);
-
-                    updateCmd.ExecuteNonQuery();
-
-                    MessageBox.Show("อัปเดตข้อมูลสำเร็จ");
-                    LoadData();
-                }
-                else
+                if (index < 0)
                 {
                     MessageBox.Show("กรุณาเลือกข้อมูลที่ต้องการแก้ไข", "ข้อผิดพลาด");
+                    return;
                 }
+
+                if (!int.TryParse(richTextBox1.Text, out int newAmount) || newAmount <= 0)
+                {
+                    MessageBox.Show("กรุณากรอกจำนวนที่ถูกต้อง (ต้องมากกว่า 0)", "ข้อผิดพลาด");
+                    return;
+                }
+
+                DataGridViewRow row = dataGridView1.Rows[index];
+                int id = Convert.ToInt32(row.Cells["ลำดับ"].Value);
+                int oldAmount = Convert.ToInt32(row.Cells["จำนวน"].Value);
+                string deviceName = comboBox1.Text;
+                string user = comboBox2.Text;
+                string note = richTextBox6.Text;
+                string phone = textBox2.Text;
+                string address = textBox3.Text;
+                string date = dateTimePicker1.Text;
+
+                int diff = newAmount - oldAmount;
+
+                // หากแก้ไขแล้วจำนวนเพิ่มขึ้น ต้องตรวจสอบคงเหลือในสต็อก
+                if (diff > 0)
+                {
+                    string checkStockQuery = "SELECT คงเหลือ FROM Equipment WHERE ชื่ออุปกรณ์ = @DeviceName";
+                    SQLiteCommand checkStockCmd = new SQLiteCommand(checkStockQuery, sqlite_conn);
+                    checkStockCmd.Parameters.AddWithValue("@DeviceName", deviceName);
+                    int stock = Convert.ToInt32(checkStockCmd.ExecuteScalar());
+
+                    if (stock < diff)
+                    {
+                        MessageBox.Show($"จำนวนคงเหลือไม่พอ: มีแค่ {stock} ชิ้น", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+
+                // อัปเดตจำนวนใน Equipment
+                string updateEquipmentQuery = @"
+            UPDATE Equipment 
+            SET จำนวนการยืม = จำนวนการยืม + @change,
+                คงเหลือ = คงเหลือ - @change
+            WHERE ชื่ออุปกรณ์ = @Device";
+                SQLiteCommand updateEquipmentCmd = new SQLiteCommand(updateEquipmentQuery, sqlite_conn);
+                updateEquipmentCmd.Parameters.AddWithValue("@change", diff);
+                updateEquipmentCmd.Parameters.AddWithValue("@Device", deviceName);
+                updateEquipmentCmd.ExecuteNonQuery();
+
+                // อัปเดตข้อมูลใน Borrow
+                string updateBorrowQuery = @"
+            UPDATE Borrow 
+            SET ชื่ออุปกรณ์ = @Device,
+                วันที่ = @Date,
+                ชื่อผู้ยืม = @User,
+                เบอร์โทร = @Phone,
+                ที่อยู่ = @Address,
+                หมายเหตุ = @Note,
+                จำนวน = @Amount
+            WHERE ลำดับ = @Id";
+                SQLiteCommand updateBorrowCmd = new SQLiteCommand(updateBorrowQuery, sqlite_conn);
+                updateBorrowCmd.Parameters.AddWithValue("@Device", deviceName);
+                updateBorrowCmd.Parameters.AddWithValue("@Date", date);
+                updateBorrowCmd.Parameters.AddWithValue("@User", user);
+                updateBorrowCmd.Parameters.AddWithValue("@Phone", phone);
+                updateBorrowCmd.Parameters.AddWithValue("@Address", address);
+                updateBorrowCmd.Parameters.AddWithValue("@Note",
+                    string.IsNullOrWhiteSpace(note) ? $"ยังขาด ({newAmount})" : note);
+                updateBorrowCmd.Parameters.AddWithValue("@Amount", newAmount);
+                updateBorrowCmd.Parameters.AddWithValue("@Id", id);
+                updateBorrowCmd.ExecuteNonQuery();
+
+                // ดึงรหัสรายการจากตาราง Borrow
+                string getCodeQuery = "SELECT รายการ FROM Borrow WHERE ลำดับ = @Id";
+                SQLiteCommand getCodeCmd = new SQLiteCommand(getCodeQuery, sqlite_conn);
+                getCodeCmd.Parameters.AddWithValue("@Id", id);
+                string code = getCodeCmd.ExecuteScalar()?.ToString();
+
+                if (!string.IsNullOrEmpty(code))
+                {
+                    // อัปเดตข้อมูลในตาราง Return
+                    string updateReturnQuery = @"
+                UPDATE Return
+                SET อุปกรณ์ = @Device,
+                    วันที่ = @Date,
+                    ชื่อ = @User,
+                    ประวัติการคืน = @History,
+                    รายละเอียด = @Note
+                WHERE รายการ = @Code";
+
+                    SQLiteCommand updateReturnCmd = new SQLiteCommand(updateReturnQuery, sqlite_conn);
+                    updateReturnCmd.Parameters.AddWithValue("@Code", code);
+                    updateReturnCmd.Parameters.AddWithValue("@Device", deviceName);
+                    updateReturnCmd.Parameters.AddWithValue("@Date", date);
+                    updateReturnCmd.Parameters.AddWithValue("@User", user);
+                    updateReturnCmd.Parameters.AddWithValue("@History", $"0/{newAmount}");
+                    updateReturnCmd.Parameters.AddWithValue("@Note", note);
+
+                    updateReturnCmd.ExecuteNonQuery();
+                }
+
+                MessageBox.Show("แก้ไขข้อมูลเรียบร้อยแล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadData(); // โหลดข้อมูลใหม่
             }
-            catch (Exception )
+            catch (Exception ex)
             {
-                MessageBox.Show($"เลือกสิ่งที่จะเเก้ไขก่อนทำการกดปุ่ม", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -585,7 +586,7 @@ namespace Demov0._1
                 comboBox2.Text = row.Cells["ชื่อผู้ยืม"].Value?.ToString();
                 textBox2.Text = row.Cells["เบอร์โทร"].Value?.ToString();
                 textBox3.Text = row.Cells["ที่อยู่"].Value?.ToString();
-                richTextBox6.Text = row.Cells["หมายเหตุ"].Value?.ToString();
+                //richTextBox6.Text = row.Cells["หมายเหตุ"].Value?.ToString();
                 richTextBox1.Text= row.Cells["จำนวน"].Value?.ToString();
 
                 string value = row.Cells[5].Value?.ToString();
@@ -629,7 +630,7 @@ namespace Demov0._1
             string searchValue = textBox1.Text;
             try
             {
-                string searchQuery = "SELECT * FROM Borrow WHERE ชื่ออุปกรณ์  LIKE @SearchValue OR วันที่ LIKE @SearchValue OR ชื่อผู้ยืม LIKE @SearchValue ";
+                string searchQuery = "SELECT * FROM Borrow WHERE ชื่ออุปกรณ์  LIKE @SearchValue OR วันที่ LIKE @SearchValue OR ชื่อผู้ยืม LIKE @SearchValue OR เบอร์โทร LIKE @SearchValue OR ที่อยู่ LIKE @SearchValue";
                 using (SQLiteCommand searchCmd = new SQLiteCommand(searchQuery, sqlite_conn))
                 {
                     searchCmd.Parameters.AddWithValue("@SearchValue", "%" + searchValue + "%");
